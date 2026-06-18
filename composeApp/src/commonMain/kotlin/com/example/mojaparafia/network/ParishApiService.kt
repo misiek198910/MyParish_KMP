@@ -6,7 +6,6 @@ import com.example.mojaparafia.model.DeleteIntentionRequest
 import com.example.mojaparafia.model.Intention
 import com.example.mojaparafia.model.IpLocationResponse
 import com.example.mojaparafia.model.LightCandleRequest
-import com.example.mojaparafia.model.ParishStatusResponse
 import com.example.mojaparafia.model.PinRequest
 import com.example.mojaparafia.model.PrayRequest
 import com.example.mojaparafia.model.RenewRequest
@@ -39,7 +38,7 @@ class ParishApiService {
 
 
                 onDownload { bytesDownloaded, totalBytes ->
-                    // DODAJ TEGO LOGA:
+
                     println("DOWNLOAD_DEBUG: Pobrano bajtów: $bytesDownloaded, Całkowita waga pliku: $totalBytes")
 
                     if (totalBytes != null && totalBytes > 0) {
@@ -50,40 +49,6 @@ class ParishApiService {
             }.body()
         } catch (e: Exception) {
             null
-        }
-    }
-
-    suspend fun getParishStatus(parishId: String): ParishStatusResponse? {
-        return try {
-            networkClient.get("$baseUrl/parishes/$parishId/status").body()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun submitProposal(proposalMap: Map<String, String>): Boolean {
-        return try {
-            val response = networkClient.submitForm(
-                url = "$baseUrl/proposals",
-                formParameters = Parameters.build {
-                    proposalMap.forEach { (key, value) -> append(key, value) }
-                }
-            )
-            response.status.isSuccess()
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    suspend fun submitNewParish(parishData: Map<String, String>): Boolean {
-        return try {
-            val response = networkClient.post("$baseUrl/api/new-parish") {
-                contentType(ContentType.Application.Json)
-                setBody(parishData)
-            }
-            response.status.isSuccess()
-        } catch (e: Exception) {
-            false
         }
     }
 

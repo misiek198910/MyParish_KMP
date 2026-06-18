@@ -36,7 +36,7 @@ fun SubscriptionScreen(
     onBuyYearlyClick: () -> Unit,
     onManageClick: () -> Unit,
     onRestoreClick: () -> Unit,
-    isIos: Boolean = false // Wymusza zaślepkę
+    isIos: Boolean = false
 ) {
     val isAmbassadorPremium = userPoints >= 50
     val effectivePremium = isPremium || isAmbassadorPremium
@@ -88,7 +88,7 @@ fun SubscriptionScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // STATUS
+
             SubscriptionSection(title = stringResource(Res.string.subscription_header_status)) {
                 Text(
                     text = statusText,
@@ -100,7 +100,6 @@ fun SubscriptionScreen(
                 )
             }
 
-            // KORZYŚCI
             SubscriptionSection(title = stringResource(Res.string.subscription_header_benefits)) {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(20.dp),
@@ -111,7 +110,6 @@ fun SubscriptionScreen(
                 }
             }
 
-            // ZAŚLEPKA iOS / SKLEP ANDROID
             Column {
                 Text(
                     text = stringResource(Res.string.subscription_header_plans).uppercase(),
@@ -123,7 +121,6 @@ fun SubscriptionScreen(
                 )
 
                 if (isIos) {
-                    // Widok zastępczy na system Apple
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = Color(0xFFE3F2FD),

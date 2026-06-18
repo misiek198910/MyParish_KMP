@@ -154,7 +154,7 @@ class ParishListViewModel : ViewModel() {
     fun submitPriestRequest(parishId: String, email: String) {
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                // apiService.sendCollaborationRequest(parishId, CollaborationRequest(email))
+                 //apiService.sendCollaborationRequest(parishId, CollaborationRequest(email))
             } catch (e: Exception) {
             }
         }
@@ -508,7 +508,7 @@ class ParishListViewModel : ViewModel() {
         }
     }
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-        val r = 6371e3 // Promień Ziemi w metrach
+        val r = 6371e3
         val phi1 = lat1 * kotlin.math.PI / 180
         val phi2 = lat2 * kotlin.math.PI / 180
         val deltaPhi = (lat2 - lat1) * kotlin.math.PI / 180

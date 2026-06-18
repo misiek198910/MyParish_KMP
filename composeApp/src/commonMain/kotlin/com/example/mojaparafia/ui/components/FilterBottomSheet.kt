@@ -50,7 +50,6 @@ import org.jetbrains.compose.resources.stringResource
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
 
-// Przejrzysty model stanu zamiast kilkunastu zmiennych
 data class FilterState(
     val isCathedral: Boolean = false,
     val isChurch: Boolean = false,
@@ -104,7 +103,6 @@ private fun FilterContent(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
 
-    // Lokalne stany dla modyfikowania filtrów przed zapisem
     var isCathedral by remember { mutableStateOf(initialState.isCathedral) }
     var isChurch by remember { mutableStateOf(initialState.isChurch) }
     var isMassForChildren by remember { mutableStateOf(initialState.isMassForChildren) }
@@ -131,7 +129,6 @@ private fun FilterContent(
         )
     }
 
-    // Obliczamy bezpieczny margines dolny dla klawiatury i paska nawigacji
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(

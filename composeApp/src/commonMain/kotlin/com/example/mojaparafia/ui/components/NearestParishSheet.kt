@@ -108,17 +108,15 @@ fun NearestParishSheet(
 
     val distanceKmString = remember(distanceKmValue) {
         val rounded = (distanceKmValue * 10).roundToInt() / 10.0
-        rounded.toString().replace('.', ',') // Opcjonalnie zamień kropkę na przecinek
+        rounded.toString().replace('.', ',')
     }
 
-    // Logika obliczania czasu do mszy przy użyciu kotlinx-datetime
     val upcomingMassInfo = remember(currentIndex) { calculateUpcomingMass(currentParish) }
     var showReminderTimeDialog by remember { mutableStateOf(false) }
 
     var selectedOption by remember { mutableStateOf(30) }
     val options = listOf(5, 10, 15, 30, 60)
 
-    // Autozamykanie panelu po 10 sekundach bezczynności
     LaunchedEffect(currentIndex, showTransportDialog) {
         if (!showTransportDialog) {
             delay(10000)
@@ -196,9 +194,8 @@ fun NearestParishSheet(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Tekst informujący o najbliższej mszy świętej
             val massInfoText = if (upcomingMassInfo != null) {
-                val timeStr = upcomingMassInfo.massTime.toString().take(5) // Format HH:mm
+                val timeStr = upcomingMassInfo.massTime.toString().take(5)
                 val daySuffix = if (upcomingMassInfo.isTomorrow) stringResource(Res.string.bs_tomorrow_suffix) else ""
                 val remainingStr = formatRemainingTime(upcomingMassInfo.hoursLeft, upcomingMassInfo.minutesLeft)
 
@@ -224,7 +221,7 @@ fun NearestParishSheet(
             ) {
                 if (upcomingMassInfo != null) {
                     OutlinedButton(
-                        onClick = { showReminderTimeDialog = true }, // Otwiera dialog wyboru czasu
+                        onClick = { showReminderTimeDialog = true },
                         modifier = Modifier.weight(1f).height(56.dp),
                         shape = RoundedCornerShape(28.dp),
                         border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF1976D2))
@@ -331,7 +328,6 @@ fun NearestParishSheet(
                 Button(
                     onClick = {
                         val formattedTime = upcomingMassInfo!!.massTime.toString().take(5)
-                        // Przekazujemy wybrany czas do callbacka
                         onAddReminderClick(currentParish, formattedTime, upcomingMassInfo.fullDateTime, selectedOption)
                         showReminderTimeDialog = false
                     },
@@ -376,7 +372,6 @@ private fun formatRemainingTime(hours: Long, minutes: Long): String {
 }
 
 private fun openMapNavigation(uriHandler: androidx.compose.ui.platform.UriHandler, destLat: Double, destLng: Double, travelMode: String) {
-    // Uniwersalny link, który na Androidzie i iOS otwiera natywną aplikację map lub przeglądarkę
     val url = "https://www.google.com/maps/dir/?api=1&destination=$destLat,$destLng&travelmode=$travelMode"
     uriHandler.openUri(url)
 }
@@ -389,7 +384,6 @@ private fun calculateUpcomingMass(parish: ParishEntity): UpcomingMassInfo? {
     val today = nowDateTime.date
     val currentTime = nowDateTime.time
 
-    // 1. Sprawdzamy msze z dnia dzisiejszego
     val todayHours = getMassHoursForDate(parish, today)
     val nextTodayTime = todayHours
         .mapNotNull { try { LocalTime.parse(it) } catch (e: Exception) { null } }
@@ -403,8 +397,7 @@ private fun calculateUpcomingMass(parish: ParishEntity): UpcomingMassInfo? {
         val totalMinutes = diff.inWholeMinutes
         return UpcomingMassInfo(nextTodayTime, false, totalMinutes / 60, totalMinutes % 60, targetDateTime) // <-- PRZEKAZANE
     }
-
-    // 2. Jeśli dzisiaj już nie ma mszy, sprawdzamy dzień jutrzejszy
+    
     val tomorrow = today.plus(1, DateTimeUnit.DAY)
     val tomorrowHours = getMassHoursForDate(parish, tomorrow)
     val nextTomorrowTime = tomorrowHours

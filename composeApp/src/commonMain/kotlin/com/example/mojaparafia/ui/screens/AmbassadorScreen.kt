@@ -40,8 +40,6 @@ fun AmbassadorScreen(
     showToast: (String) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
-
-    // WYCIĄGNIĘTE ZASOBY DO ZMIENNYCH
     val ambassadorTitle = stringResource(Res.string.ambassador_title)
     val pointsSubtitle = stringResource(Res.string.ambassador_points_subtitle)
     val pointsThanks = stringResource(Res.string.ambassador_points_thanks)
@@ -55,7 +53,6 @@ fun AmbassadorScreen(
     val vipDesc = stringResource(Res.string.ambassador_reward_vip_desc)
     val vipToast = stringResource(Res.string.ambassador_reward_vip_toast)
 
-    // --- LOGIKA PŁOMYKA ---
     val baseUrl = "https://mivs-myparish.mivs.dev/static/flame"
     val flameUrl = if (points > 0) "$baseUrl/flame_1.png" else "$baseUrl/flame_0.png"
     val localPlaceholder = if (points > 0) Res.drawable.flame_1 else Res.drawable.flame_0
@@ -134,7 +131,6 @@ fun AmbassadorScreen(
                 Spacer(modifier = Modifier.height(40.dp))
             }
 
-            // --- ASYSTENT PŁOMYK Z DYNAMICZNYM DYMKIEM ---
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)

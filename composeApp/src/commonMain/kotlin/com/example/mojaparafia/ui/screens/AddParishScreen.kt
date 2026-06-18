@@ -34,7 +34,7 @@ fun AddParishScreen(
     initialLng: String,
     isPremium: Boolean,
     onBackClick: () -> Unit,
-    viewModel: com.example.mojaparafia.viewmodel.ParishListViewModel, // Zamieniliśmy onGetLocationClick na viewModel
+    viewModel: com.example.mojaparafia.viewmodel.ParishListViewModel,
     onSubmitClick: (Map<String, String>) -> Unit,
     showToast: (String) -> Unit
 ) {

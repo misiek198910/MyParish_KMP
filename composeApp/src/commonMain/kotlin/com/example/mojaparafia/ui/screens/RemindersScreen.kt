@@ -24,7 +24,6 @@ import com.example.mojaparafia.util.Reminder
 import com.example.mojaparafia.util.ReminderScheduler
 import com.example.mojaparafia.viewmodel.ParishListViewModel
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import myparish.composeapp.generated.resources.Res
@@ -44,7 +43,6 @@ fun RemindersScreen(
     val userPoints by viewModel.userPoints.collectAsState(0)
     val effectivePremium = isPremium || userPoints >= 50
 
-    // Filtrowanie tylko przyszłych przypomnień za pomocą kotlinx-datetime
     val futureReminders = remember(reminders) {
         val currentMoment = Clock.System.now()
         val timeZone = TimeZone.currentSystemDefault()
@@ -83,7 +81,6 @@ fun RemindersScreen(
             }
         },
         bottomBar = {
-            // Współdzielony AdBanner
             if (!effectivePremium) {
                 Box(
                     modifier = Modifier
@@ -118,7 +115,7 @@ fun RemindersScreen(
                 ) {
                     items(
                         items = futureReminders,
-                        key = { it.notificationId } // Optymalizacja list w Compose
+                        key = { it.notificationId }
                     ) { reminder ->
                         ReminderCard(
                             reminder = reminder,
@@ -134,11 +131,7 @@ fun RemindersScreen(
 }
 
 @Composable
-fun ReminderCard(
-    reminder: Reminder,
-    onDeleteClick: () -> Unit
-) {
-    // Ręczne formatowanie daty kompatybilne z KMP (kotlinx-datetime)
+fun ReminderCard(reminder: Reminder, onDeleteClick: () -> Unit) {
     val dt = reminder.reminderDateTime
     val day = dt.dayOfMonth.toString().padStart(2, '0')
     val month = dt.monthNumber.toString().padStart(2, '0')

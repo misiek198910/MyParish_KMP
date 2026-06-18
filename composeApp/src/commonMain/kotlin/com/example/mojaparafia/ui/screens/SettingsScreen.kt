@@ -291,7 +291,6 @@ fun SettingsScreen(
         )
     }
 
-    // DIALOG: Zmiana Języka
     if (showLanguageDialog) {
         val options = listOf(
             "pl" to "Polski",
@@ -362,7 +361,6 @@ fun SettingsScreen(
         )
     }
 
-    // Okienko informacyjne zrestartuj aplikację
     if (showRestartPrompt) {
         AlertDialog(
             onDismissRequest = { },
@@ -372,7 +370,6 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         showRestartPrompt = false
-                        // 🔥 Wywołujemy natywny kod podając oczekiwany język
                         onRestartAppRequired(pendingLanguageChange)
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
@@ -388,8 +385,7 @@ fun SettingsScreen(
             containerColor = Color.White
         )
     }
-
-    // DIALOG: Anulowanie powiadomień
+    
     if (showCancelDialog) {
         AlertDialog(
             onDismissRequest = { showCancelDialog = false },

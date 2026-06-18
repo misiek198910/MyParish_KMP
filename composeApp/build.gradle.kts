@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.io.FileInputStream
 import java.util.Properties
 
 val localProperties = Properties()
@@ -119,6 +118,7 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "mivs.mojaparafia"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
@@ -135,8 +135,6 @@ android {
         // Wstrzykiwanie kluczy FB do kodu i zasobów XML (np. dla AndroidManifest)
         buildConfigField("String", "FACEBOOK_APP_ID", "\"$fbAppId\"")
         buildConfigField("String", "FACEBOOK_CLIENT_TOKEN", "\"$fbClientToken\"")
-        resValue("string", "facebook_app_id", fbAppId)
-        resValue("string", "facebook_client_token", fbClientToken)
     }
 
     signingConfigs {

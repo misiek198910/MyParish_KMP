@@ -126,7 +126,6 @@ fun NewsCard(news: NewsResponse) {
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
-            // Obrazek (jeśli istnieje)
             if (!news.imageUrl.isNullOrEmpty()) {
                 AsyncImage(
                     model = news.imageUrl,
@@ -140,7 +139,6 @@ fun NewsCard(news: NewsResponse) {
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                // Data publikacji
                 if (!news.publishDate.isNullOrEmpty()) {
                     Text(
                         text = news.publishDate,
@@ -150,7 +148,6 @@ fun NewsCard(news: NewsResponse) {
                     )
                 }
 
-                // Tytuł
                 Text(
                     text = news.title ?: "",
                     fontSize = 18.sp,
@@ -160,7 +157,6 @@ fun NewsCard(news: NewsResponse) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Treść
                 if (!news.content.isNullOrEmpty()) {
                     Text(
                         text = news.content,
@@ -170,7 +166,6 @@ fun NewsCard(news: NewsResponse) {
                     )
                 }
 
-                // Przycisk akcji (np. zbiórka, zewnętrzny link)
                 if (!news.actionLink.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
@@ -180,7 +175,7 @@ fun NewsCard(news: NewsResponse) {
                                 val safeUrl = if (!link.startsWith("http")) "https://$link" else link
                                 uriHandler.openUri(safeUrl)
                             } catch (e: Exception) {
-                                // Opcjonalnie: logowanie błędu, jeśli link jest niepoprawny
+
                             }
                         },
                         modifier = Modifier

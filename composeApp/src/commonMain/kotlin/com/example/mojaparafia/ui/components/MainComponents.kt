@@ -315,7 +315,7 @@ fun MapLoadingOverlay(isMapLoaded: Boolean, onRetry: () -> Unit) {
                         fontSize = 14.sp
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    TextButton(onClick = onRetry) { // Używamy lambdy onRetry zamiast Androidowego Intent
+                    TextButton(onClick = onRetry) {
                         Text(tryAgainStr, color = Color(0xFF1976D2))
                     }
                 }

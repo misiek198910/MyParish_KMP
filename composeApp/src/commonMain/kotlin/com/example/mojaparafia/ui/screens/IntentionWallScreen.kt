@@ -750,7 +750,6 @@ fun AddIntentionDialog(onDismiss: () -> Unit, isLandscape: Boolean, onConfirm: (
 @Composable
 fun EditIntentionDialog(intention: Intention, isLandscape: Boolean, onDismiss: () -> Unit, onConfirm: (String, String, Boolean) -> Unit) {
     var text by remember { mutableStateOf(intention.content) }
-    // 🔥 POPRAWKA: is_anonymous -> isAnonymous
     var isAnonymous by remember { mutableStateOf(intention.isAnonymous) }
     val categories = listOf("O zdrowie", "Za zmarłych", "Dziękczynna", "Ogólna")
     var selectedCategory by remember { mutableStateOf(intention.category ?: "Ogólna") }
@@ -807,7 +806,6 @@ fun ShareIntentionDialog(intention: Intention, onDismiss: () -> Unit) {
         Res.drawable.intention_8
     )
 
-    // ZAMKNIĘCIE BLOKU REMEMBER BYŁO PROBLEMEM
     var selectedBg by remember { mutableStateOf(backgrounds[0]) }
     val currentImageBitmap = imageResource(selectedBg)
 
@@ -1074,10 +1072,9 @@ fun BigCandlePreviewDialog(candle: Candle, myDeviceId: String, onDismiss: () -> 
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(32.dp)
             ) {
-                // POPRAWKA: deviceId
+
                 val isMine = candle.deviceId == myDeviceId
 
-                // POPRAWKA: lighterParishName
                 val lighterName = if (!candle.lighterParishName.isNullOrBlank()) {
                     "Parafianin z: ${candle.lighterParishName}"
                 } else {
@@ -1099,7 +1096,6 @@ fun BigCandlePreviewDialog(candle: Candle, myDeviceId: String, onDismiss: () -> 
                 )
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // POPRAWKA: expiresAt
                 val expireTime =
                     remember(candle.expiresAt) { parseServerTime(candle.expiresAt).toEpochMilliseconds() }
                 val currentTime = Clock.System.now().toEpochMilliseconds()
@@ -1242,7 +1238,6 @@ fun getCategoryEmoji(categoryName: String) = when (categoryName) {
     else -> "💬"
 }
 
-// Konwersja czasu serwera "yyyy-MM-dd HH:mm:ss" na Instant (KMP)
 fun parseServerTime(timeStr: String): Instant {
     return try {
         Instant.parse(timeStr.replace(" ", "T") + "Z")
@@ -1254,8 +1249,7 @@ fun parseServerTime(timeStr: String): Instant {
 @Composable
 fun getTimeInfo(createdAt: String?): String {
     if (createdAt.isNullOrEmpty()) return ""
-
-    // POPRAWKA: Bezpieczne parsowanie, wyjęte przed użycie composables
+    
     val createdTime = try {
         parseServerTime(createdAt).toEpochMilliseconds()
     } catch (e: Exception) {

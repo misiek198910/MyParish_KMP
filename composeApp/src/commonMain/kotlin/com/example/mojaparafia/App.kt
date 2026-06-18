@@ -23,7 +23,7 @@ import com.example.mojaparafia.ui.screens.SubscriptionScreen
 import com.example.mojaparafia.ui.screens.WelcomeScreen
 import com.example.mojaparafia.ui.screens.ParishDetailScreen
 import com.example.mojaparafia.ui.screens.RemindersScreen
-import com.example.mojaparafia.ui.screens.AddParishScreen // 🔥 DODANY IMPORT
+import com.example.mojaparafia.ui.screens.AddParishScreen
 import com.example.mojaparafia.ui.screens.AmbassadorScreen
 import com.example.mojaparafia.ui.screens.HelpScreen
 import com.example.mojaparafia.ui.screens.NewsScreen
@@ -248,7 +248,7 @@ fun App(
                         parishId = changeScreen.parishId,
                         parishName = changeScreen.parishName,
                         viewModel = viewModel,
-                        onBackClick = { currentScreen = Screen.ParishDetails(changeScreen.parishId) }, // Wraca do detali parafii
+                        onBackClick = { currentScreen = Screen.ParishDetails(changeScreen.parishId) },
                         onGetLocationClick = {
                             showToast("Aby zaktualizować dokładną lokalizację, zamknij to okno, przytrzymaj palec na mapie i wciśnij 'Dodaj'.")
                         },

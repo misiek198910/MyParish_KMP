@@ -12,7 +12,6 @@ data class Reminder(
     val reminderDateTime: LocalDateTime
 )
 
-// 2. Interfejs, który zaimplementujemy na Androidzie i iOS
 interface ReminderScheduler {
     fun scheduleReminder(reminder: Reminder)
     fun cancelReminder(notificationId: Int)
