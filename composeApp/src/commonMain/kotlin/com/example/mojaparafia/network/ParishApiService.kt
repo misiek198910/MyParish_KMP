@@ -4,17 +4,17 @@ import com.example.mojaparafia.db.ParishEntity
 import com.example.mojaparafia.model.AddIntentionRequest
 import com.example.mojaparafia.model.DeleteIntentionRequest
 import com.example.mojaparafia.model.Intention
-import com.example.mojaparafia.model.IpLocationResponse
 import com.example.mojaparafia.model.LightCandleRequest
 import com.example.mojaparafia.model.PinRequest
 import com.example.mojaparafia.model.PrayRequest
 import com.example.mojaparafia.model.RenewRequest
 import com.example.mojaparafia.model.SetHomeParishRequest
 import com.example.mojaparafia.model.UpdateIntentionRequest
-import com.example.mojaparafia.model.UpdateTokenRequest
 import com.example.mojaparafia.model.UserStatsResponse
 import com.example.mojaparafia.model.ExtinguishRequest
 import com.example.mojaparafia.model.NewsResponse
+import com.example.mojaparafia.model.IpLocationResponse // 🔥 PRZYWRÓCONE
+import com.example.mojaparafia.model.UpdateTokenRequest // 🔥 PRZYWRÓCONE
 import io.ktor.client.call.body
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.forms.submitForm
@@ -36,11 +36,7 @@ class ParishApiService {
             networkClient.get("$baseUrl/v2/parishes") {
                 if (since != null) parameter("since", since)
 
-
                 onDownload { bytesDownloaded, totalBytes ->
-
-                    println("DOWNLOAD_DEBUG: Pobrano bajtów: $bytesDownloaded, Całkowita waga pliku: $totalBytes")
-
                     if (totalBytes != null && totalBytes > 0) {
                         val percentage = ((bytesDownloaded * 100) / totalBytes).toInt()
                         onProgress(percentage)
@@ -187,6 +183,23 @@ class ParishApiService {
         }
     }
 
+    suspend fun getNewsFeed(): List<NewsResponse>? {
+        return try {
+            networkClient.get("$baseUrl/news").body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
+    suspend fun getIpLocation(): IpLocationResponse? {
+        return try {
+            networkClient.get("$baseUrl/api/locate-me").body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun updateFcmToken(request: UpdateTokenRequest): Boolean {
         return try {
             networkClient.post("$baseUrl/user/update-token") {
@@ -197,21 +210,6 @@ class ParishApiService {
             false
         }
     }
-
-    suspend fun getNewsFeed(): List<NewsResponse>? {
-        return try {
-            networkClient.get("$baseUrl/news").body()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun getIpLocation(): IpLocationResponse? {
-        return try {
-            networkClient.get("$baseUrl/api/locate-me").body()
-        } catch (e: Exception) {
-            null
-        }
-    }
 }
+
 val apiService = ParishApiService()

@@ -62,6 +62,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 fun MainScreen(
     viewModel: ParishListViewModel,
     reminderScheduler: ReminderScheduler,
+    pushAction: String? = null,
+    pushParishId: String? = null,
+    onPushHandled: () -> Unit = {},
     showToast: (String) -> Unit,
     isLandscape: Boolean,
     onNavigateToAddParish: (Double, Double) -> Unit,
@@ -117,6 +120,17 @@ fun MainScreen(
     var displayedParishes by remember { mutableStateOf<List<ParishEntity>>(emptyList()) }
 
     var currentScreen by rememberSaveable { mutableStateOf("MAP") }
+
+    LaunchedEffect(pushAction, pushParishId) {
+        if (pushAction == "open_intentions") {
+            currentScreen = "INTENTION_WALL"
+            onPushHandled()
+        }
+        else if (!pushParishId.isNullOrEmpty()) {
+            onNavigateToDetails(pushParishId)
+            onPushHandled() 
+        }
+    }
 
     LaunchedEffect(searchQuery, currentFilterState, parishes) {
         kotlinx.coroutines.delay(250)

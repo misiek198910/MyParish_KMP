@@ -14,6 +14,7 @@ import com.example.mojaparafia.model.PrayRequest
 import com.example.mojaparafia.model.RenewRequest
 import com.example.mojaparafia.model.SetHomeParishRequest
 import com.example.mojaparafia.model.UpdateIntentionRequest
+import com.example.mojaparafia.model.UpdateTokenRequest
 import com.example.mojaparafia.network.apiService
 import com.example.mojaparafia.repository.parishRepository
 import com.example.mojaparafia.util.Reminder
@@ -116,6 +117,15 @@ class ParishListViewModel : ViewModel() {
             viewModelScope.launch(Dispatchers.Default) {
                 parishRepository.loadParishesFromDatabase()
                 syncParishes()
+
+                if (_homeParishId.value == null) {
+                    val location = apiService.getIpLocation()
+                    if (location != null && location.lat != 0.0 && location.lon != 0.0) {
+                        withContext(Dispatchers.Main) {
+                            focusMapOn(location.lat, location.lon)
+                        }
+                    }
+                }
             }
         }
     }
@@ -225,7 +235,7 @@ class ParishListViewModel : ViewModel() {
     fun deleteIntention(intentionId: Int) {
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                val request = DeleteIntentionRequest(intentionId, _deviceId.value)
+                val request = DeleteIntentionRequest(id = intentionId, deviceId = _deviceId.value)
                 if (apiService.deleteIntention(request)) {
                     fetchIntentions()
                     syncParishes()
@@ -571,6 +581,18 @@ class ParishListViewModel : ViewModel() {
                 e.printStackTrace()
                 println("Błąd połączenia: ${e.message}")
             }
+        }
+    }
+
+    fun saveFcmToken(token: String) {
+        if (_deviceId.value.isEmpty() || token.isEmpty()) return
+
+        viewModelScope.launch(Dispatchers.Default) {
+            val request = UpdateTokenRequest(
+                deviceId = _deviceId.value,
+                fcmToken = token
+            )
+            apiService.updateFcmToken(request)
         }
     }
 

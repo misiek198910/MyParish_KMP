@@ -37,12 +37,15 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
 import mivs.mojaparafia.util.ReminderManager
 import java.util.Calendar
 
 // 🔥 POPRAWKA: Czyste ComponentActivity, idealne dla Compose KMP
 class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener {
 
+    private val pushAction = MutableStateFlow<String?>(null)
+    private val pushParishId = MutableStateFlow<String?>(null)
     private var billingManager: BillingManager? = null
     private lateinit var viewModel: ParishListViewModel
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -87,6 +90,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
 
         val kmpSettings = com.russhwolf.settings.Settings()
         val themeMode = kmpSettings.getInt("app_theme", 0)
@@ -136,13 +140,15 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             checkForAppUpdates()
         }
 
-        handleNotificationAction()
+        handleNotificationAction(intent)
 
         billingManager = SubscriptionManager.getInstance(this).billingManager
         billingManager?.setListener(this)
 
         setContent {
             val locationAction by viewModel.locationRequest.collectAsState()
+            val action by pushAction.collectAsState()
+            val parishId by pushParishId.collectAsState()
 
             LaunchedEffect(locationAction) {
                 locationAction?.let { action ->
@@ -171,6 +177,12 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
 
             App(
                 viewModel = viewModel,
+                pushAction = action,
+                pushParishId = parishId,
+                onPushHandled = {            
+                    pushAction.value = null
+                    pushParishId.value = null
+                },
 
                 reminderScheduler = reminderManager,
                 showToast = { message ->
@@ -315,7 +327,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        handleNotificationAction()
+        handleNotificationAction(intent)
         val targetLat = intent.getDoubleExtra("TARGET_LAT", 0.0)
         val targetLon = intent.getDoubleExtra("TARGET_LON", 0.0)
         if (targetLat != 0.0) {
@@ -323,7 +335,15 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
         }
     }
 
-    private fun handleNotificationAction() { }
+    private fun handleNotificationAction(intent: Intent?) {
+        intent?.extras?.let { bundle ->
+            val action = bundle.getString("action") ?: bundle.get("action")?.toString()
+            val parishId = bundle.getString("parish_id") ?: bundle.get("parish_id")?.toString()
+
+            if (action != null) pushAction.value = action
+            if (parishId != null) pushParishId.value = parishId
+        }
+    }
 
     override fun onResume() {
         super.onResume()

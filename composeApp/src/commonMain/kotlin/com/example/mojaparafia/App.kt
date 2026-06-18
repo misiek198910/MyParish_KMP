@@ -49,6 +49,9 @@ sealed class Screen {
 @Composable
 fun App(
     viewModel: ParishListViewModel,
+    pushAction: String? = null,
+    pushParishId: String? = null,
+    onPushHandled: () -> Unit = {},
     reminderScheduler: ReminderScheduler,
     onRequestPlatformPermissions: () -> Unit,
     showToast: (String) -> Unit,
@@ -101,6 +104,9 @@ fun App(
             Box(modifier = Modifier.fillMaxSize()) {
                 MainScreen(
                     viewModel = viewModel,
+                    pushAction = pushAction,
+                    pushParishId = pushParishId,
+                    onPushHandled = onPushHandled,
                     reminderScheduler = reminderScheduler,
                     showToast = showToast,
                     isLandscape = false,
