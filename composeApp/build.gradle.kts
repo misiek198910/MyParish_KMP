@@ -80,6 +80,7 @@ kotlin {
 
         androidMain.dependencies {
 
+            implementation(libs.firebase.messaging.ktx)
             implementation(libs.billing.client)
             implementation(libs.compose.livedata)
             implementation(libs.billing.ktx)
@@ -122,8 +123,8 @@ android {
         applicationId = "mivs.mojaparafia"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 52
-        versionName = "1.2.33"
+        versionCode = 53
+        versionName = "1.2.34"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

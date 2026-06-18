@@ -17,8 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
@@ -37,6 +39,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
 import mivs.mojaparafia.util.ReminderManager
 import java.util.Calendar
@@ -115,7 +118,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             }
         }
 
-        // Funkcja globalnie aktualizuje Configuration (Zadziała bez AppCompatActivity!)
         AppCompatDelegate.setDefaultNightMode(nightMode)
 
         AndroidAppContext.initialize(applicationContext)
@@ -147,6 +149,33 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
 
         setContent {
             val locationAction by viewModel.locationRequest.collectAsState()
+
+            val isPremiumAndroid by billingManager!!.isPremium.observeAsState(false)
+            LaunchedEffect(isPremiumAndroid) {
+                viewModel.updatePremiumStatus(isPremiumAndroid)
+            }
+
+            val parishes by viewModel.allParishes.collectAsState(emptyList())
+
+            val favoriteParishes by remember(parishes) {
+                derivedStateOf { parishes.filter { it.isFavorite } }
+            }
+            LaunchedEffect(favoriteParishes) {
+                favoriteParishes.forEach { parish ->
+                    val topic = "parish_${parish.id}"
+                    FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        viewModel.saveFcmToken(token) // Nasza wczorajsza metoda z ViewModelu!
+                    }
+                }
+            }
+
             val action by pushAction.collectAsState()
             val parishId by pushParishId.collectAsState()
 
@@ -179,7 +208,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                 viewModel = viewModel,
                 pushAction = action,
                 pushParishId = parishId,
-                onPushHandled = {            
+                onPushHandled = {
                     pushAction.value = null
                     pushParishId.value = null
                 },

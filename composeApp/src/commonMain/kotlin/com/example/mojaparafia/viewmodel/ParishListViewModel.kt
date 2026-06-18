@@ -130,6 +130,10 @@ class ParishListViewModel : ViewModel() {
         }
     }
 
+    fun updatePremiumStatus(hasPremium: Boolean) {
+        _isPremium.value = hasPremium
+    }
+
     fun performInitialSyncAndFinish(onError: () -> Unit) {
         if (!_isFirstRun.value) return
         viewModelScope.launch(Dispatchers.Default) {
