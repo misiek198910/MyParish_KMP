@@ -2,7 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleName</key>
+    <string>Moja Parafia</string>
+    <key>CFBundleDisplayName</key>
+    <string>Moja Parafia</string>
+	<key>AD_BANNER_INLINE_ID</key>
+	<string>$(AD_BANNER_INLINE_ID)</string>
+	<key>AD_BANNER_ID</key>
+	<string>$(AD_BANNER_ID)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>$(APP_ID)</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Aplikacja &quot;Moja Parafia&quot; używa lokalizacji do wyświetlania na mapie najbliższych parafii w Twojej okolicy.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ad-services-config>
+    <attestations>
+        <enrollment sandbox="https://www.gstatic.com/adservices/enrollment/enrollment-data.json"/>
+    </attestations>
+
+    <attribution-allowlist names="com.facebook.katana" />
+    <attribution-allowlist names="com.facebook.orca" />
+
+</ad-services-config>
