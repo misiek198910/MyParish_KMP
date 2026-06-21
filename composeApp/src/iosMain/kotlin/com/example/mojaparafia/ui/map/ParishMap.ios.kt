@@ -25,6 +25,8 @@ interface SwiftMapController {
     fun setOnMarkerClickListener(onClick: (String) -> Unit)
     fun setOnCameraChangeListener(onChange: (String) -> Unit)
     fun setMapTheme(isDark: Boolean)
+
+    fun setOnMapLongClickListener(onLongClick: (Double, Double) -> Unit)
 }
 
 interface SwiftMapFactory {
@@ -67,6 +69,11 @@ actual fun ParishMap(
         mapController.setOnMarkerClickListener { id ->
             onMarkerClick(id)
         }
+
+        mapController.setOnMapLongClickListener { lat, lng ->
+            onMapLongClick(lat, lng)
+        }
+
         mapController.setOnCameraChangeListener { boundsString ->
             val parts = boundsString.split(",")
             if (parts.size == 4) {

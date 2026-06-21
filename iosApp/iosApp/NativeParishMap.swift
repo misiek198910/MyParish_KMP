@@ -83,7 +83,9 @@ class ParishClusterView: MKMarkerAnnotationView {
     let mapView = MKMapView()
     var onClick: ((String) -> Void)?
     var onCameraChange: ((String) -> Void)?
-    
+
+    var onMapLongClick: ((KotlinDouble, KotlinDouble) -> Void)?
+
     override init() {
         super.init()
         mapView.delegate = self
@@ -91,18 +93,22 @@ class ParishClusterView: MKMarkerAnnotationView {
         mapView.pointOfInterestFilter = .excludingAll
         mapView.isAccessibilityElement = false
         mapView.accessibilityElementsHidden = true
-        
+
         mapView.register(FlatParishView.self, forAnnotationViewWithReuseIdentifier: "FlatParishView")
         mapView.register(ParishClusterView.self, forAnnotationViewWithReuseIdentifier: "ClusterView")
-        
+
         let polandCenter = CLLocationCoordinate2D(latitude: 52.0693, longitude: 19.4803)
         let region = MKCoordinateRegion(center: polandCenter, latitudinalMeters: 700000, longitudinalMeters: 700000)
         mapView.setRegion(region, animated: false)
+
+        // 🔥 NOWE: Konfiguracja i dodanie gestu długiego przytrzymania do mapy
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
+        longPressGesture.minimumPressDuration = 0.5 // Pół sekundy przytrzymania wywoła akcję
+        mapView.addGestureRecognizer(longPressGesture)
     }
-    
+
     var view: UIView { return mapView }
-    
-    // 🔥 FUNDAMENT POD USTAWIENIA: Zmuszanie systemu iOS do rysowania nocy/dnia
+
     func setMapTheme(isDark: Bool) {
         if isDark {
             mapView.overrideUserInterfaceStyle = .dark
@@ -110,28 +116,45 @@ class ParishClusterView: MKMarkerAnnotationView {
             mapView.overrideUserInterfaceStyle = .light
         }
     }
-    
+
     func setOnMarkerClickListener(onClick: @escaping (String) -> Void) {
         self.onClick = onClick
     }
-    
+
     func setOnCameraChangeListener(onChange: @escaping (String) -> Void) {
         self.onCameraChange = onChange
         self.mapView(self.mapView, regionDidChangeAnimated: false)
     }
-    
+
+    // Zwróć uwagę na KotlinDouble zamiast Double
+    func setOnMapLongClickListener(onLongClick: @escaping (KotlinDouble, KotlinDouble) -> Void) {
+        self.onMapLongClick = onLongClick
+    }
+
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        if gestureRecognizer.state == .began {
+            let touchPoint = gestureRecognizer.location(in: mapView)
+            let coordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
+
+            onMapLongClick?(
+                KotlinDouble(value: coordinate.latitude),
+                KotlinDouble(value: coordinate.longitude)
+            )
+        }
+    }
+
     func centerOn(lat: Double, lng: Double) {
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lng)
         let region = MKCoordinateRegion(center: coord, latitudinalMeters: 2000, longitudinalMeters: 2000)
         mapView.setRegion(region, animated: true)
     }
-    
+
     func updateParishes(jsonString: String) {
         DispatchQueue.global(qos: .userInitiated).async {
             guard let data = jsonString.data(using: .utf8) else { return }
             do {
                 let parishes = try JSONDecoder().decode([ParishMapData].self, from: data)
-                
+
                 let newAnnotations = parishes.map { p -> FastSwiftAnnotation in
                     let ann = FastSwiftAnnotation()
                     ann.coordinate = CLLocationCoordinate2D(latitude: p.lat, longitude: p.lng)
@@ -143,15 +166,15 @@ class ParishClusterView: MKMarkerAnnotationView {
                     ann.glyph = p.glyphText
                     return ann
                 }
-                
+
                 DispatchQueue.main.async {
                     let current = self.mapView.annotations.compactMap { $0 as? FastSwiftAnnotation }
                     let currentIds = Set(current.map { $0.parishId })
                     let newIds = Set(newAnnotations.map { $0.parishId })
-                    
+
                     let toRemove = current.filter { !newIds.contains($0.parishId) }
                     let toAdd = newAnnotations.filter { !currentIds.contains($0.parishId) }
-                    
+
                     if !toRemove.isEmpty { self.mapView.removeAnnotations(toRemove) }
                     if !toAdd.isEmpty { self.mapView.addAnnotations(toAdd) }
                 }
@@ -160,75 +183,67 @@ class ParishClusterView: MKMarkerAnnotationView {
             }
         }
     }
-    
+
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let center = mapView.region.center
         let span = mapView.region.span
-        
+
         let latDelta = span.latitudeDelta * 1.5
         let lngDelta = span.longitudeDelta * 1.5
-        
+
         let minLat = center.latitude - latDelta / 2
         let maxLat = center.latitude + latDelta / 2
         let minLng = center.longitude - lngDelta / 2
         let maxLng = center.longitude + lngDelta / 2
-        
+
         onCameraChange?("\(minLat),\(maxLat),\(minLng),\(maxLng)")
     }
-    
+
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            if annotation is MKUserLocation { return nil }
-            if let cluster = annotation as? MKClusterAnnotation {
-                let view = mapView.dequeueReusableAnnotationView(withIdentifier: "ClusterView", for: annotation) as! ParishClusterView
-                return view
-            }
-            if let pAnn = annotation as? FastSwiftAnnotation {
-                let view = mapView.dequeueReusableAnnotationView(withIdentifier: "FlatParishView", for: annotation) as! FlatParishView
-                
-                if pAnn.glyph == "👑" { view.image = imgCrown }
-                else if pAnn.glyph == "🕍" { view.image = imgCathedral }
-                else { view.image = imgChurch }
-                
-                // Konfiguracja pastylki tekstowej
-                if pAnn.hasExtras, let subtitle = pAnn.subtitle, !subtitle.isEmpty {
-                    view.pillLabel.text = "  \(subtitle)  "
-                    view.pillLabel.isHidden = false
-                    view.setNeedsLayout()
-                } else {
-                    view.pillLabel.isHidden = true
-                }
-                
-                // 🔥 POPRAWIONY, POTRĘCONY EFEKT ŚWIECENIA NA IOS (Efekt mocnego neonu)
-                if pAnn.hasCandles {
-                    view.layer.shadowColor = UIColor.systemOrange.cgColor
-                    view.layer.shadowOffset = .zero
-                    view.layer.masksToBounds = false
-                    
-                    // Trik z potężnym blaskiem: Rasteryzacja zbija warstwy cieni w jeden mocny punkt,
-                    // a shadowPath w kształcie lekko powiększonego koła daje idealną głębię.
-                    view.layer.shadowRadius = 8.0  // Mniejszy promień skupia mocne światło blisko ikony
-                    view.layer.shadowOpacity = 1.0 // Pełne nasycenie koloru
-                    
-                    // Dodatkowo tworzymy ścieżkę wokół ikony, żeby iOS rysował blask idealnie symetrycznie
-                    let glowRect = view.bounds.insetBy(dx: -6, dy: -6)
-                    view.layer.shadowPath = UIBezierPath(ovalIn: glowRect).cgPath
-                    
-                    // Zwiększamy wydajność renderowania rozświetlenia
-                    view.layer.shouldRasterize = true
-                    view.layer.rasterizationScale = UIScreen.main.scale
-                    
-                } else {
-                    // Dla zwykłych parafii całkowicie wyłączamy efekty warstwy
-                    view.layer.shadowOpacity = 0.0
-                    view.layer.shadowPath = nil
-                    view.layer.shouldRasterize = false
-                }
-                
-                return view
-            }
-            return nil
+        if annotation is MKUserLocation { return nil }
+        if let cluster = annotation as? MKClusterAnnotation {
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: "ClusterView", for: annotation) as! ParishClusterView
+            return view
         }
-    
+        if let pAnn = annotation as? FastSwiftAnnotation {
+            let view = mapView.dequeueReusableAnnotationView(withIdentifier: "FlatParishView", for: annotation) as! FlatParishView
+
+            if pAnn.glyph == "👑" { view.image = imgCrown }
+            else if pAnn.glyph == "🕍" { view.image = imgCathedral }
+            else { view.image = imgChurch }
+
+            if pAnn.hasExtras, let subtitle = pAnn.subtitle, !subtitle.isEmpty {
+                view.pillLabel.text = "  \(subtitle)  "
+                view.pillLabel.isHidden = false
+                view.setNeedsLayout()
+            } else {
+                view.pillLabel.isHidden = true
+            }
+
+            if pAnn.hasCandles {
+                view.layer.shadowColor = UIColor.systemOrange.cgColor
+                view.layer.shadowOffset = .zero
+                view.layer.masksToBounds = false
+                view.layer.shadowRadius = 8.0
+                view.layer.shadowOpacity = 1.0
+
+                let glowRect = view.bounds.insetBy(dx: -6, dy: -6)
+                view.layer.shadowPath = UIBezierPath(ovalIn: glowRect).cgPath
+
+                view.layer.shouldRasterize = true
+                view.layer.rasterizationScale = UIScreen.main.scale
+
+            } else {
+                view.layer.shadowOpacity = 0.0
+                view.layer.shadowPath = nil
+                view.layer.shouldRasterize = false
+            }
+
+            return view
+        }
+        return nil
+    }
+
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         if let pAnn = view.annotation as? FastSwiftAnnotation {
             onClick?(pAnn.parishId)
@@ -236,7 +251,6 @@ class ParishClusterView: MKMarkerAnnotationView {
         }
     }
 }
-
 @objc class NativeMapFactoryImpl: NSObject, SwiftMapFactory {
     func createMap() -> SwiftMapController {
         return NativeMapControllerImpl()

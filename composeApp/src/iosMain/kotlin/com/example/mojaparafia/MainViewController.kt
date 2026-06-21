@@ -45,6 +45,22 @@ import platform.darwin.NSObject
 import platform.posix.exit
 import platform.darwin.dispatch_async
 import platform.darwin.dispatch_get_main_queue
+import kotlinx.coroutines.flow.MutableStateFlow
+
+val iosPushAction = MutableStateFlow<String?>(null)
+val iosPushParishId = MutableStateFlow<String?>(null)
+
+
+fun setIosPushData(action: String?, parishId: String?) {
+    iosPushAction.value = action
+    iosPushParishId.value = parishId
+}
+
+interface IosPushManager {
+    fun subscribeToTopic(topic: String)
+    fun unsubscribeFromTopic(topic: String)
+    fun getFcmToken(onResult: (String) -> Unit)
+}
 
 class IosReminderScheduler : ReminderScheduler {
     override fun scheduleReminder(reminder: Reminder) {
@@ -116,12 +132,34 @@ class SimpleLocationManager(
 }
 
 @Suppress("FunctionName", "unused")
-fun MainViewController() = ComposeUIViewController {
+fun MainViewController(pushManager: IosPushManager) = ComposeUIViewController {
     val iosViewModel = remember { ParishListViewModel() }
+
+    val action by iosPushAction.collectAsState()
+    val parishId by iosPushParishId.collectAsState()
 
     val iosDeviceId = UIDevice.currentDevice.identifierForVendor?.UUIDString ?: "unknown_ios_device"
     val settings = Settings()
     val savedHomeParishId = settings.getStringOrNull("home_parish_id")
+
+    val parishes by iosViewModel.allParishes.collectAsState(emptyList())
+    val favoriteParishes by remember(parishes) {
+        androidx.compose.runtime.derivedStateOf { parishes.filter { it.isFavorite } }
+    }
+
+    LaunchedEffect(favoriteParishes) {
+        kotlinx.coroutines.delay(2000)
+        favoriteParishes.forEach { parish ->
+            pushManager.subscribeToTopic("parish_${parish.id}")
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(2000)
+        pushManager.getFcmToken { token ->
+            iosViewModel.saveFcmToken(token)
+        }
+    }
 
     LaunchedEffect(Unit) {
         val themeMode = settings.getInt("app_theme", 0)
@@ -186,13 +224,18 @@ fun MainViewController() = ComposeUIViewController {
     App(
         viewModel = iosViewModel,
         reminderScheduler = iosReminderScheduler,
+        pushAction = action,
+        pushParishId = parishId,
+        onPushHandled = {
+            iosPushAction.value = null
+            iosPushParishId.value = null
+        },
         showToast = { message ->
             val alert = UIAlertController.alertControllerWithTitle(null, message, platform.UIKit.UIAlertControllerStyleAlert)
             alert.addAction(UIAlertAction.actionWithTitle("OK", UIAlertActionStyleDefault, null))
             UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(alert, true, null)
         },
         onRequestPlatformPermissions = {
-            // 1. Pytamy o powiadomienia (To wywoła systemowy popup iOS)
             val center = UNUserNotificationCenter.currentNotificationCenter()
             center.requestAuthorizationWithOptions(
                 UNAuthorizationOptionAlert or UNAuthorizationOptionSound
@@ -236,7 +279,7 @@ fun MainViewController() = ComposeUIViewController {
                 userDefaults.synchronize()
                 exit(0)
             } else {
-                // 🔥 POPRAWKA: Zmiana motywu na iOS realizowana dynamicznie na aktywnym oknie
+                // Dynamiczna zmiana motywu na iOS realizowana na aktywnym oknie
                 val themeMode = Settings().getInt("app_theme", 0)
                 val window = UIApplication.sharedApplication.keyWindow
 

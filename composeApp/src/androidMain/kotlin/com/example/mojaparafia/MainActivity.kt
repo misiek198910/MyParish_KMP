@@ -171,7 +171,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                 FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val token = task.result
-                        viewModel.saveFcmToken(token) // Nasza wczorajsza metoda z ViewModelu!
+                        viewModel.saveFcmToken(token)
                     }
                 }
             }

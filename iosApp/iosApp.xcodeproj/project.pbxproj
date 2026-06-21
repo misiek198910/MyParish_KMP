@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		50252DC42FE1D93500DB0867 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 50252DC32FE1D93500DB0867 /* GoogleMobileAds */; };
+		504B0CB22FE5842300B9E89B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 504B0CB12FE5842300B9E89B /* FirebaseAnalytics */; };
+		504B0CB42FE5842300B9E89B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 504B0CB32FE5842300B9E89B /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				504B0CB42FE5842300B9E89B /* FirebaseMessaging in Frameworks */,
+				504B0CB22FE5842300B9E89B /* FirebaseAnalytics in Frameworks */,
 				50252DC42FE1D93500DB0867 /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +95,8 @@
 			name = iosApp;
 			packageProductDependencies = (
 				50252DC32FE1D93500DB0867 /* GoogleMobileAds */,
+				504B0CB12FE5842300B9E89B /* FirebaseAnalytics */,
+				504B0CB32FE5842300B9E89B /* FirebaseMessaging */,
 			);
 			productName = iosApp;
 			productReference = 4FF419E1A44F5F666ECD22CA /* MyParish.app */;
@@ -122,6 +128,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				50252DC22FE1D93500DB0867 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				504B0CB02FE5842300B9E89B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D9DB6F80D700520E7E7504ED /* Products */;
@@ -146,7 +153,6 @@
 /* Begin PBXShellScriptBuildPhase section */
 		57F7C7CFBA86FF7B1B2BB8E2 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -212,7 +218,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -305,6 +311,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -313,6 +320,8 @@
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(BUILD_DIR)/../../SourcePackages/Artifacts/**";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Moja Parafia";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Aplikacja \"Moja Parafia\" używa lokalizacji do wyświetlania na mapie najbliższych parafii w Twojej okolicy.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -322,6 +331,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = mivs.mojaparafia;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -334,6 +344,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -342,6 +353,8 @@
 				"FRAMEWORK_SEARCH_PATHS[arch=*]" = "$(BUILD_DIR)/../../SourcePackages/Artifacts/**";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Moja Parafia";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Aplikacja \"Moja Parafia\" używa lokalizacji do wyświetlania na mapie najbliższych parafii w Twojej okolicy.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -351,6 +364,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = mivs.mojaparafia;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -389,6 +403,14 @@
 				minimumVersion = 13.5.0;
 			};
 		};
+		504B0CB02FE5842300B9E89B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.15.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -396,6 +418,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 50252DC22FE1D93500DB0867 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
+		};
+		504B0CB12FE5842300B9E89B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 504B0CB02FE5842300B9E89B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		504B0CB32FE5842300B9E89B /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 504B0CB02FE5842300B9E89B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
