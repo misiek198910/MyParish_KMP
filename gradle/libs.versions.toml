@@ -39,8 +39,11 @@ lifecycle-viewmodel = "2.8.2"
 billing = "8.3.0"
 composeLiveData = "1.6.8"
 firebase-messaging = "23.4.1"
+facebook-android-sdk = "17.0.0"
 
 [libraries]
+facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebook-android-sdk" }
+
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
 
 compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "composeLiveData" }

@@ -27,6 +27,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mojaparafia.billing.BillingManager
 import com.example.mojaparafia.billing.SubscriptionManager
 import com.example.mojaparafia.viewmodel.ParishListViewModel
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsConstants
+import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -44,7 +47,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import mivs.mojaparafia.util.ReminderManager
 import java.util.Calendar
 
-// 🔥 POPRAWKA: Czyste ComponentActivity, idealne dla Compose KMP
 class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener {
 
     private val pushAction = MutableStateFlow<String?>(null)
@@ -57,6 +59,8 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     private lateinit var prefs: SharedPreferences
     protected val analytics: FirebaseAnalytics by lazy { Firebase.analytics }
     private var pendingLocationAction: (() -> Unit)? = null
+
+    private lateinit var fbLogger: AppEventsLogger
 
     private val welcomeLocationLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
         prefs.edit { putBoolean("location_permission_shown", true) }
@@ -92,6 +96,9 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        fbLogger = AppEventsLogger.newLogger(this)
+
         enableEdgeToEdge()
 
 
@@ -286,7 +293,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                     billingManager?.queryPurchasesAsync()
                     Toast.makeText(this@MainActivity, "Przywracanie zakupów...", Toast.LENGTH_SHORT).show()
                 },
-                isIos = false // Jesteśmy na Androidzie, więc pokazujemy przyciski i ceny
+                isIos = false 
             )
         }
     }
@@ -294,7 +301,12 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     override fun onPurchaseAcknowledged() {
         runOnUiThread {
             Toast.makeText(this, "Subskrypcja aktywowana!", Toast.LENGTH_LONG).show()
-            viewModel.fetchUserStats() // Odświeżamy premium w aplikacji natychmiast
+            viewModel.fetchUserStats()
+            val params = Bundle().apply {
+                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, "premium_subscription")
+            }
+
+            fbLogger.logEvent(AppEventsConstants.EVENT_NAME_SUBSCRIBE, params)
         }
     }
 

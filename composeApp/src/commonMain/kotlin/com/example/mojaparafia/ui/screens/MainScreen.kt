@@ -113,6 +113,8 @@ fun MainScreen(
     var hasNewNews by remember { mutableStateOf(false) }
     var showFilterSheet by remember { mutableStateOf(false) }
 
+    var showMissingParishBanner by rememberSaveable { mutableStateOf(true) }
+
     var currentFilterState by remember { mutableStateOf(FilterState()) }
     val mapFocusRequest by viewModel.mapFocusRequest.collectAsState()
 
@@ -301,6 +303,16 @@ fun MainScreen(
                             onFilterClick = { showFilterSheet = true },
                             onSearchSubmit = { query -> viewModel.logSearchEvent(query) }
                         )
+
+                        AnimatedVisibility(
+                            visible = showMissingParishBanner,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut()
+                        ) {
+                            MissingParishBanner(
+                                onDismiss = { showMissingParishBanner = false }
+                            )
+                        }
                     }
 
                     val bottomPadding = if (isLandscape) {

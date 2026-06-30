@@ -491,4 +491,8 @@
     <string name="transport_title">Wybierz środek transportu</string>
 
     <string name="ios_subs_coming_soon">Zarządzanie subskrypcjami dla systemu iOS pojawi się wkrótce.</string>
+
+    <string name="dialog_btn_ok">Rozumiem</string>
+    <string name="banner_missing_parish_title">Nie ma Twojej parafii na mapie? Kliknij</string>
+    <string name="banner_missing_parish_desc">Przytrzymaj palcem na mapie miejsce, w którym znajduje się parafia, i dodaj ją. Każde zgłoszenie weryfikujemy i uzupełniamy o aktualne dane!</string>
 </resources>

@@ -79,7 +79,7 @@ kotlin {
         }
 
         androidMain.dependencies {
-
+            implementation(libs.facebook.android.sdk)
             implementation(libs.firebase.messaging.ktx)
             implementation(libs.billing.client)
             implementation(libs.compose.livedata)
@@ -123,8 +123,8 @@ android {
         applicationId = "mivs.mojaparafia"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 53
-        versionName = "1.2.34"
+        versionCode = 55
+        versionName = "1.2.36"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -133,9 +133,11 @@ android {
         val fbAppId = localProperties.getProperty("FACEBOOK_APP_ID", "")
         val fbClientToken = localProperties.getProperty("FACEBOOK_CLIENT_TOKEN", "")
 
-        // Wstrzykiwanie kluczy FB do kodu i zasobów XML (np. dla AndroidManifest)
         buildConfigField("String", "FACEBOOK_APP_ID", "\"$fbAppId\"")
         buildConfigField("String", "FACEBOOK_CLIENT_TOKEN", "\"$fbClientToken\"")
+
+        manifestPlaceholders["facebookAppId"] = fbAppId
+        manifestPlaceholders["facebookClientToken"] = fbClientToken
     }
 
     signingConfigs {
@@ -182,12 +184,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11 // Pamiętaj, że dla KMP często używamy 11 lub 17
+        sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
-        // TO JEST KLUCZOWE: Pozwala na używanie buildConfigField w kodzie!
         buildConfig = true
     }
 }

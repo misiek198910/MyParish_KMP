@@ -43,6 +43,14 @@
             android:resource="@xml/gma_ad_services_config"
             tools:replace="android:resource" />
 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="${facebookAppId}" />
+
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="${facebookClientToken}" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

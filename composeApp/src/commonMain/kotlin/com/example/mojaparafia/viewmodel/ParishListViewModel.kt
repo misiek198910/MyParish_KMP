@@ -32,6 +32,7 @@ import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -589,14 +590,30 @@ class ParishListViewModel : ViewModel() {
     }
 
     fun saveFcmToken(token: String) {
-        if (_deviceId.value.isEmpty() || token.isEmpty()) return
 
-        viewModelScope.launch(Dispatchers.Default) {
-            val request = UpdateTokenRequest(
-                deviceId = _deviceId.value,
-                fcmToken = token
-            )
-            apiService.updateFcmToken(request)
+        if (_deviceId.value.isEmpty() || token.isEmpty()) {
+            println("[FCM] Błąd: Brak deviceId lub tokena. Nie można wysłać do serwera.")
+            return
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request = UpdateTokenRequest(
+                    deviceId = _deviceId.value,
+                    fcmToken = token
+                )
+
+                val isSuccess = apiService.updateFcmToken(request)
+
+                if (isSuccess) {
+                    println("[FCM] Token wysłany pomyślnie: $token")
+                } else {
+                    println("[FCM] Błąd: Serwer odrzucił aktualizację tokena (status: false).")
+                }
+            } catch (e: Exception) {
+                println("[FCM] Krytyczny błąd podczas aktualizacji tokena na serwerze: ${e.message}")
+                e.printStackTrace()
+            }
         }
     }
 
