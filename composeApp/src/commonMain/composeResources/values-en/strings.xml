@@ -557,4 +557,8 @@
     <string name="transport_title">Choose transport mode</string>
 
     <string name="ios_subs_coming_soon">Subscription management for iOS is coming soon.</string>
+
+    <string name="dialog_btn_ok">Got it</string>
+    <string name="banner_missing_parish_title">Is your parish missing from the map? Click</string>
+    <string name="banner_missing_parish_desc">Long-press the location on the map where the parish is located to add it. We verify every submission and update it with current data!</string>
 </resources>

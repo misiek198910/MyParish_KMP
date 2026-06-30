@@ -491,4 +491,8 @@
     <string name="transport_title">Elige el medio de transporte</string>
 
     <string name="ios_subs_coming_soon">La gestión de suscripciones para iOS estará disponible pronto.</string>
+
+    <string name="dialog_btn_ok">Entendido</string>
+    <string name="banner_missing_parish_title">¿Tu parroquia no está en el mapa? Haz clic</string>
+    <string name="banner_missing_parish_desc">Mantén presionado en el mapa el lugar donde se encuentra la parroquia para agregarla. ¡Verificamos cada envío y lo completamos con datos actuales!</string>
 </resources>

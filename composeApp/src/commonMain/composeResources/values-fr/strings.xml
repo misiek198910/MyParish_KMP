@@ -491,4 +491,8 @@
     <string name="transport_title">Choisissez le mode de transport</string>
 
     <string name="ios_subs_coming_soon">La gestion des abonnements pour iOS sera bientôt disponible.</string>
+
+    <string name="dialog_btn_ok">Compris</string>
+    <string name="banner_missing_parish_title">Votre paroisse n&apos;est pas sur la carte ? Cliquez</string>
+    <string name="banner_missing_parish_desc">Appuyez longuement sur l&apos;emplacement de la paroisse sur la carte pour l&apos;ajouter. Nous vérifions chaque soumission et la complétons avec des données à jour !</string>
 </resources>

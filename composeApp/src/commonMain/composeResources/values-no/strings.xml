@@ -491,4 +491,8 @@
     <string name="transport_title">Velg transportmiddel</string>
 
     <string name="ios_subs_coming_soon">Abonnementsadministrasjon for iOS kommer snart.</string>
+
+    <string name="dialog_btn_ok">Forstått</string>
+    <string name="banner_missing_parish_title">Er ikke menigheten din på kartet? Klikk</string>
+    <string name="banner_missing_parish_desc">Hold fingeren på kartet der menigheten ligger for å legge den til. Vi verifiserer hver innsending og oppdaterer med aktuelle data!</string>
 </resources>

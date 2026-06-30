@@ -491,4 +491,8 @@
     <string name="transport_bus">Громадський транспорт</string>
 
     <string name="ios_subs_coming_soon">Керування підписками для iOS з&apos;явиться незабаром.</string>
+
+    <string name="dialog_btn_ok">Зрозуміло</string>
+    <string name="banner_missing_parish_title">Вашої парафії немає на мапі? Натисніть</string>
+    <string name="banner_missing_parish_desc">Утримуйте пальцем на мапі місце, де знаходиться парафія, щоб додати її. Ми перевіряємо кожну заявку та доповнюємо її актуальними даними!</string>
 </resources>
