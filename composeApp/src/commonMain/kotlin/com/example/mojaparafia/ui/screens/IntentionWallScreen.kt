@@ -55,12 +55,9 @@ import com.example.mojaparafia.viewmodel.ParishListViewModel
 import myparish.composeapp.generated.resources.*
 import myparish.composeapp.generated.resources.Res
 import kotlin.math.abs
-
-// Importy Platformowe KMP i zasobów
 import com.example.mojaparafia.showPlatformToast
 import com.example.mojaparafia.generateAndShareIntentionImage
 import com.example.mojaparafia.navigateToMap
-import com.example.mojaparafia.AdBannerView
 import com.example.mojaparafia.db.ParishEntity
 import com.example.mojaparafia.isLandscapeOrientation
 import com.example.mojaparafia.ui.components.AdBanner
@@ -69,6 +66,7 @@ import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.collections.find
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 
 private val StickyNotePalettes = listOf(
     Color(0xFFFFEFA1), Color(0xFFFFC0CB), Color(0xFFAEEEEE),
@@ -82,11 +80,14 @@ fun IntentionWallScreen(
     onBackClick: () -> Unit,
     isGooglePremium: Boolean
 ) {
+    val isRefreshing by viewModel.isLoading.collectAsState(false)
     val intentions by viewModel.intentions.collectAsState(emptyList())
     val isLoading by viewModel.isLoading.collectAsState(false)
     val allParishes by viewModel.allParishes.collectAsState(emptyList())
     val homeParishId by viewModel.homeParishId.collectAsState(null)
     val userPoints by viewModel.userPoints.collectAsState(0)
+
+    val adminDeviceId by viewModel.adminDeviceId.collectAsState(null)
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -102,14 +103,15 @@ fun IntentionWallScreen(
 
     var selectedFilter by remember { mutableStateOf("ALL") }
 
-    val filteredIntentions = remember(intentions, selectedFilter, homeParishId, viewModel.deviceId) {
-        when (selectedFilter) {
-            "ALL" -> intentions
-            "MINE" -> intentions.filter { it.creatorId == viewModel.deviceId.value }
-            "HOME_PARISH" -> intentions.filter { it.authorParishId == homeParishId }
-            else -> intentions.filter { it.category == selectedFilter }
+    val filteredIntentions =
+        remember(intentions, selectedFilter, homeParishId, viewModel.deviceId) {
+            when (selectedFilter) {
+                "ALL" -> intentions
+                "MINE" -> intentions.filter { it.creatorId == viewModel.deviceId.value }
+                "HOME_PARISH" -> intentions.filter { it.authorParishId == homeParishId }
+                else -> intentions.filter { it.category == selectedFilter }
+            }
         }
-    }
 
     val isLandscape = isLandscapeOrientation()
     val effectivePremium = isGooglePremium || userPoints >= 50
@@ -121,8 +123,10 @@ fun IntentionWallScreen(
     val toastAdded = stringResource(Res.string.intention_wall_toast_added)
     val toastUpdated = stringResource(Res.string.intention_wall_toast_updated)
     val toastUpdateError = stringResource(Res.string.intention_wall_toast_update_error)
-    val toastCandleExtinguished = stringResource(Res.string.intention_wall_toast_candle_extinguished)
-    val toastCandleExtinguishError = stringResource(Res.string.intention_wall_toast_candle_extinguish_error)
+    val toastCandleExtinguished =
+        stringResource(Res.string.intention_wall_toast_candle_extinguished)
+    val toastCandleExtinguishError =
+        stringResource(Res.string.intention_wall_toast_candle_extinguish_error)
     val toastRenewError = stringResource(Res.string.intention_wall_toast_renew_error)
 
     LaunchedEffect(homeParishId) {
@@ -133,84 +137,104 @@ fun IntentionWallScreen(
         containerColor = Color(0xFFDCDCDC),
         bottomBar = {
             if (!effectivePremium) {
-                Box(modifier = Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars)) {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                ) {
                     AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = effectivePremium)
                 }
             }
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { if (homeParishId == null) showParishPrompt = true else showAddDialog = true },
+                onClick = {
+                    if (homeParishId == null) showParishPrompt = true else showAddDialog = true
+                },
                 containerColor = if (homeParishId == null) Color.Gray else MaterialTheme.colorScheme.primary,
                 shape = CircleShape,
                 elevation = FloatingActionButtonDefaults.elevation(8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(Res.string.intention_wall_cd_add), tint = Color.White)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.intention_wall_cd_add),
+                    tint = Color.White
+                )
             }
         }
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
-            if (isLoading && intentions.isEmpty()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        start = if (isLandscape) 85.dp else 16.dp,
-                        end = 16.dp,
-                        top = paddingValues.calculateTopPadding() + 80.dp,
-                        bottom = paddingValues.calculateBottomPadding() + 100.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-                    items(
-                        items = filteredIntentions,
-                        key = { it.id },
-                        contentType = { "intention_card" }
-                    ) { intention ->
-                        val stickyNoteColor = remember(intention.id) {
-                            val index = (intention.id * 31).hashCode()
-                            StickyNotePalettes[abs(index) % StickyNotePalettes.size]
-                        }
-                        IntentionCard(
-                            intention = intention,
-                            backgroundColor = stickyNoteColor,
-                            myDeviceId = viewModel.deviceId.value,
-                            allParishes = allParishes,
-                            onPrayClick = { if (homeParishId == null) showParishPrompt = true else viewModel.prayForIntention(intention.id) },
-                            onDeleteClick = { intentionToDelete = intention },
-                            onEditClick = { intentionToEdit = intention },
-                            onShareClick = { intentionToShare = intention },
-                            onCandleClick = {
-                                if (homeParishId == null) {
-                                    showParishPrompt = true
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                viewModel.fetchIntentions()
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = if (isLandscape) 85.dp else 16.dp,
+                    end = 16.dp,
+                    top = paddingValues.calculateTopPadding() + 80.dp,
+                    bottom = paddingValues.calculateBottomPadding() + 100.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(
+                    items = filteredIntentions,
+                    key = { it.id },
+                    contentType = { "intention_card" }
+                ) { intention ->
+                    val stickyNoteColor = remember(intention.id) {
+                        val index = (intention.id * 31).hashCode()
+                        StickyNotePalettes[abs(index) % StickyNotePalettes.size]
+                    }
+                    IntentionCard(
+                        intention = intention,
+                        backgroundColor = stickyNoteColor,
+                        myDeviceId = viewModel.deviceId.value,
+                        adminDeviceId = adminDeviceId,
+                        allParishes = allParishes,
+                        onPrayClick = {
+                            if (homeParishId == null) showParishPrompt =
+                                true else viewModel.prayForIntention(intention.id)
+                        },
+                        onDeleteClick = { intentionToDelete = intention },
+                        onEditClick = { intentionToEdit = intention },
+                        onShareClick = { intentionToShare = intention },
+                        onCandleClick = {
+                            if (homeParishId == null) {
+                                showParishPrompt = true
+                            } else {
+                                val hasAlreadyLit =
+                                    intention.candles?.any { it.deviceId == viewModel.deviceId.value } == true
+                                if (hasAlreadyLit) {
+                                    showPlatformToast(toastAlreadyLit)
                                 } else {
-                                    val hasAlreadyLit = intention.candles?.any { it.deviceId == viewModel.deviceId.value } == true
-                                    if (hasAlreadyLit) {
-                                        showPlatformToast(toastAlreadyLit)
-                                    } else {
-                                        val isForDeceased = intention.category == "Za zmarłych"
-                                        val type = if (isForDeceased) "znicz" else "candle"
+                                    val isForDeceased = intention.category == "Za zmarłych"
+                                    val type = if (isForDeceased) "znicz" else "candle"
 
-                                        viewModel.lightCandle(intention.id, type, 24) { success ->
-                                            if(success) {
-                                                showPlatformToast(toastCandleLit)
-                                                viewModel.fetchIntentions()
-                                                viewModel.fetchUserStats()
-                                            } else {
-                                                showPlatformToast(toastCandleError)
-                                            }
+                                    viewModel.lightCandle(intention.id, type, 24) { success ->
+                                        if (success) {
+                                            showPlatformToast(toastCandleLit)
+                                            viewModel.fetchIntentions()
+                                            viewModel.fetchUserStats()
+                                        } else {
+                                            showPlatformToast(toastCandleError)
                                         }
                                     }
                                 }
-                            },
-                            onSingleCandleClick = { candle -> candleForPreview = candle },
-                            onRenewClick = { intentionToRenew = intention },
-                            onPinClick = { viewModel.togglePin(intention.id) }
-                        )
-                    }
+                            }
+                        },
+                        onSingleCandleClick = { candle -> candleForPreview = candle },
+                        onRenewClick = { intentionToRenew = intention },
+                        onPinClick = { viewModel.togglePin(intention.id) }
+                    )
                 }
             }
+        }
+
+
 
             Row(
                 modifier = Modifier
@@ -427,6 +451,7 @@ fun IntentionCard(
     intention: Intention,
     backgroundColor: Color,
     myDeviceId: String,
+    adminDeviceId: String?,
     allParishes: List<ParishEntity>,
     onPrayClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -451,7 +476,6 @@ fun IntentionCard(
         if (intention.isAnonymous) null else allParishes.find { it.id == intention.authorParishId }?.name
     }
 
-    val ADMIN_ID = "ca31b6b0a75f655b"
     val finalBackgroundColor = if (intention.isPinned) Color(0xFFFFD700) else backgroundColor
     val finalElevation = if (intention.isPinned) 12.dp else 6.dp
 
@@ -512,7 +536,7 @@ fun IntentionCard(
                         Icon(imageVector = Icons.Default.Share, contentDescription = null, tint = Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
                     }
 
-                    if (myDeviceId == ADMIN_ID) {
+                    if (adminDeviceId != null && myDeviceId == adminDeviceId) {
                         IconButton(onClick = onPinClick, modifier = Modifier.size(36.dp)) {
                             if (intention.isPinned) {
                                 Text(text = "📌", fontSize = 18.sp)
@@ -558,11 +582,11 @@ fun IntentionCard(
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(20.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
 
                 val activeCandlesCount = intention.candles?.size ?: 0
+                val hasAlreadyLit = intention.candles?.any { it.deviceId == myDeviceId } == true
 
                 Row(modifier = Modifier.clickable { expandedCommunity = !expandedCommunity }.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(painter = painterResource(Res.drawable.ic_pray_vector), contentDescription = null, tint = if (intention.prayedByMe) Color(0xFF1976D2) else Color.Black.copy(alpha = 0.5f), modifier = Modifier.size(20.dp))
@@ -582,13 +606,45 @@ fun IntentionCard(
                     Icon(imageVector = if (expandedCommunity) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color.Black.copy(alpha = 0.4f))
                 }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = onCandleClick, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)), shape = RoundedCornerShape(12.dp)) {
-                        Text(stringResource(Res.string.intention_wall_btn_light).uppercase(), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth() // Row zajmuje całą dostępną szerokość
+                ) {
+                    val buttonHeight = 44.dp
+
+                    Button(
+                        onClick = onCandleClick,
+                        colors = ButtonDefaults.buttonColors(containerColor = if (hasAlreadyLit) Color.Gray else Color(0xFFFF9800)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.height(buttonHeight).weight(1f),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.intention_wall_btn_light).uppercase(),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center
+                        )
                     }
-                    Button(onClick = onPrayClick, colors = ButtonDefaults.buttonColors(containerColor = if (intention.prayedByMe) Color.Gray else MaterialTheme.colorScheme.primary), shape = RoundedCornerShape(12.dp)) {
+
+                    Button(
+                        onClick = onPrayClick,
+                        colors = ButtonDefaults.buttonColors(containerColor = if (intention.prayedByMe) Color.Red.copy(alpha = 0.8f) else Color(0xFF4CAF50)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.height(buttonHeight).weight(1f),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
                         val prayStr = if (intention.prayedByMe) stringResource(Res.string.intention_wall_btn_pray_stop) else stringResource(Res.string.intention_wall_btn_pray_start)
-                        Text(prayStr.uppercase(), fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(
+                            text = prayStr.uppercase(),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 12.sp
+                        )
                     }
                 }
             }

@@ -4,6 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class AdminConfig(
+    val admin_device_id: String,
+    val admin_fcm_token: String
+)
+@Serializable
 data class NewsResponse(
     val id: Int = 0,
     val title: String? = null,

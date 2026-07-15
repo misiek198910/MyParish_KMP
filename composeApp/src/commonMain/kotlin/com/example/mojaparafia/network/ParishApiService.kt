@@ -2,6 +2,7 @@ package com.example.mojaparafia.network
 
 import com.example.mojaparafia.db.ParishEntity
 import com.example.mojaparafia.model.AddIntentionRequest
+import com.example.mojaparafia.model.AdminConfig
 import com.example.mojaparafia.model.DeleteIntentionRequest
 import com.example.mojaparafia.model.Intention
 import com.example.mojaparafia.model.LightCandleRequest
@@ -13,10 +14,11 @@ import com.example.mojaparafia.model.UpdateIntentionRequest
 import com.example.mojaparafia.model.UserStatsResponse
 import com.example.mojaparafia.model.ExtinguishRequest
 import com.example.mojaparafia.model.NewsResponse
-import com.example.mojaparafia.model.IpLocationResponse // 🔥 PRZYWRÓCONE
-import com.example.mojaparafia.model.UpdateTokenRequest // 🔥 PRZYWRÓCONE
+import com.example.mojaparafia.model.IpLocationResponse
+import com.example.mojaparafia.model.UpdateTokenRequest
 import io.ktor.client.call.body
 import io.ktor.client.plugins.onDownload
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -191,7 +193,6 @@ class ParishApiService {
         }
     }
 
-
     suspend fun getIpLocation(): IpLocationResponse? {
         return try {
             networkClient.get("$baseUrl/api/locate-me").body()
@@ -205,6 +206,25 @@ class ParishApiService {
             networkClient.post("$baseUrl/user/update-token") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
+            }.status.isSuccess()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun getAdminConfig(): AdminConfig? {
+        return try {
+            networkClient.get("$baseUrl/api/admin/config").body()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun updateAdminFcmToken(deviceId: String, token: String): Boolean {
+        return try {
+            networkClient.post("$baseUrl/api/admin/update-credentials") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf("device_id" to deviceId, "fcm_token" to token))
             }.status.isSuccess()
         } catch (e: Exception) {
             false
