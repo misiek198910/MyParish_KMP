@@ -179,6 +179,8 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                     if (task.isSuccessful) {
                         val token = task.result
                         viewModel.saveFcmToken(token)
+                        viewModel.syncAdminTokenToHub(token)
+                        viewModel.fetchAdminConfig()
                     }
                 }
             }
@@ -315,7 +317,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             Toast.makeText(this, "Błąd zakupu: $error", Toast.LENGTH_LONG).show()
         }
     }
-
     private fun runPermissionChain() {
         when {
             !prefs.getBoolean("ad_consent_given", false) -> {
@@ -375,7 +376,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             viewModel.focusMapOn(targetLat, targetLon)
         }
     }
-
     private fun handleNotificationAction(intent: Intent?) {
         intent?.extras?.let { bundle ->
             val action = bundle.getString("action") ?: bundle.get("action")?.toString()

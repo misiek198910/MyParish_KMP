@@ -23,6 +23,7 @@ import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -44,6 +45,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class ParishListViewModel : ViewModel() {
 
@@ -60,6 +63,8 @@ class ParishListViewModel : ViewModel() {
     private val settings = Settings()
 
     private val REMINDERS_KEY = "saved_reminders_list"
+
+    lateinit var deviceIdStr: String
 
     enum class LocationAction { CURRENT_LOCATION, NEAREST_PARISH }
 
@@ -95,10 +100,6 @@ class ParishListViewModel : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _deviceId = MutableStateFlow("")
-    val deviceId: StateFlow<String> = _deviceId.asStateFlow()
-
     private val _homeParishId = MutableStateFlow<String?>(null)
     val homeParishId: StateFlow<String?> = _homeParishId.asStateFlow()
 
@@ -108,7 +109,11 @@ class ParishListViewModel : ViewModel() {
     private val _hasCrown = MutableStateFlow(false)
     val hasCrown: StateFlow<Boolean> = _hasCrown.asStateFlow()
 
-    lateinit var deviceIdStr: String
+    private val _deviceId = MutableStateFlow("")
+    val deviceId: StateFlow<String> = _deviceId.asStateFlow()
+
+    private val _adminDeviceId = MutableStateFlow<String?>(null)
+    val adminDeviceId: StateFlow<String?> = _adminDeviceId.asStateFlow()
 
     private val _mapFocusRequest = MutableStateFlow<Pair<Double, Double>?>(null)
     val mapFocusRequest: StateFlow<Pair<Double, Double>?> = _mapFocusRequest.asStateFlow()
@@ -612,6 +617,40 @@ class ParishListViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 println("[FCM] Krytyczny błąd podczas aktualizacji tokena na serwerze: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun syncAdminTokenToHub(token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // 1. Pobieramy konfigurację admina z serwera (czyste GET)
+                val config = apiService.getAdminConfig()
+
+                // 2. Jeśli serwer nie zwrócił danych lub ID się nie zgadza - przerywamy
+                if (config == null || _deviceId.value != config.admin_device_id) {
+                    return@launch
+                }
+
+                // 3. Jesteśmy adminem! Wysyłamy aktualny token do bazy
+                val success = apiService.updateAdminFcmToken(_deviceId.value, token)
+
+                if (success) {
+                    println("Admin token (FCM) zaktualizowany w Hubie pomyślnie!")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchAdminConfig() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val config = apiService.getAdminConfig()
+                _adminDeviceId.value = config?.admin_device_id
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

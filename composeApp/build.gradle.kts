@@ -123,8 +123,8 @@ android {
         applicationId = "mivs.mojaparafia"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 55
-        versionName = "1.2.36"
+        versionCode = 56
+        versionName = "1.2.37"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
