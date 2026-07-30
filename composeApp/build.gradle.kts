@@ -28,7 +28,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -79,11 +79,8 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.facebook.android.sdk)
             implementation(libs.firebase.messaging.ktx)
-            implementation(libs.billing.client)
             implementation(libs.compose.livedata)
-            implementation(libs.billing.ktx)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
@@ -94,7 +91,6 @@ kotlin {
             implementation(libs.play.services.location)
             implementation(libs.maps.compose)
             implementation(libs.maps.utils)
-            implementation(libs.play.services.ads)
             implementation(libs.play.app.update)
             implementation(libs.play.app.update.ktx)
             implementation(libs.play.review)
@@ -130,19 +126,12 @@ android {
 
         manifestPlaceholders["mapsApiKey"] = ""
 
-        val fbAppId = localProperties.getProperty("FACEBOOK_APP_ID", "")
-        val fbClientToken = localProperties.getProperty("FACEBOOK_CLIENT_TOKEN", "")
-
-        buildConfigField("String", "FACEBOOK_APP_ID", "\"$fbAppId\"")
-        buildConfigField("String", "FACEBOOK_CLIENT_TOKEN", "\"$fbClientToken\"")
-
-        manifestPlaceholders["facebookAppId"] = fbAppId
-        manifestPlaceholders["facebookClientToken"] = fbClientToken
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file(localProperties.getProperty("MYAPP_RELEASE_STORE_FILE", "brak-sciezki"))
+            storeFile =
+                file(localProperties.getProperty("MYAPP_RELEASE_STORE_FILE", "brak-sciezki"))
             storePassword = localProperties.getProperty("MYAPP_RELEASE_STORE_PASSWORD", "")
             keyAlias = localProperties.getProperty("MYAPP_RELEASE_KEY_ALIAS", "")
             keyPassword = localProperties.getProperty("MYAPP_RELEASE_KEY_PASSWORD", "")
@@ -153,33 +142,18 @@ android {
         getByName("debug") {
             val debugKey = localProperties.getProperty("MAPS_API_KEY_DEBUG") ?: "BRAK_KLUCZA_DEBUG"
             manifestPlaceholders["mapsApiKey"] = debugKey
-            manifestPlaceholders["adMobAppId"] = "ca-app-pub-3940256099942544~3347511713"
-
-            buildConfigField("String", "AD_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
-            buildConfigField("String", "AD_START_UNIT_ID", "\"ca-app-pub-3940256099942544/9257395921\"")
-            buildConfigField("String", "AD_BANNER_INLINE_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
-            buildConfigField("String", "AD_REWARDED_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
         }
 
         getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
 
             val releaseMapsKey = localProperties.getProperty("MAPS_API_KEY_RELEASE") ?: ""
-            val bannerId = localProperties.getProperty("AD_BANNER_ID") ?: ""
-            val bannerInlineId = localProperties.getProperty("AD_BANNER_INLINE_ID") ?: ""
-            val adStartId = localProperties.getProperty("AD_START_UNIT_ID") ?: ""
-            val adMobAppId = localProperties.getProperty("AD_APP_ID") ?: ""
-            val adRewardedId = localProperties.getProperty("AD_REWARDED_ID") ?: ""
-
             manifestPlaceholders["mapsApiKey"] = releaseMapsKey
-            manifestPlaceholders["adMobAppId"] = adMobAppId
-
-            buildConfigField("String", "AD_BANNER_ID", "\"$bannerId\"")
-            buildConfigField("String", "AD_BANNER_INLINE_ID", "\"$bannerInlineId\"")
-            buildConfigField("String", "AD_START_UNIT_ID", "\"$adStartId\"")
-            buildConfigField("String", "AD_REWARDED_ID", "\"$adRewardedId\"")
         }
     }
 

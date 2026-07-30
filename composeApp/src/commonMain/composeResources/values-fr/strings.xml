@@ -363,36 +363,40 @@
     <string name="help_flame_cd">Sparky l&apos;Assistant</string>
     <string name="help_no_email_app">Aucune application de messagerie</string>
     <string name="help_email_subject">Question pour Sparky</string>
+
     <string name="help_q1_title">Comment trouver une paroisse sur la carte ?</string>
     <string name="help_q1_desc">Utilisez l&apos;icône de la loupe en haut à droite pour taper le nom de la ville ou de la paroisse. Vous pouvez également cliquer sur l&apos;icône [icon] dans le panneau latéral pour centrer la carte sur votre position.</string>
+
     <string name="help_q5_title">Que faire si je ne veux pas partager ma position ?</string>
     <string name="help_q5_desc">Le partage de la position n&apos;est pas obligatoire, mais sans elle, l&apos;application ne pourra pas afficher votre position sur la carte ni indiquer automatiquement les paroisses les plus proches. Votre position est utilisée uniquement pour la navigation et n&apos;est ni collectée ni utilisée à d&apos;autres fins.</string>
+
     <string name="help_q6_title">Comment trouver la messe la plus proche ?</string>
     <string name="help_q6_desc">Sous le bouton de votre position se trouve l&apos;icône [icon]. En cliquant dessus, une carte avec les prochains offices s&apos;ouvrira, ainsi que les options &apos;Naviguer&apos; ou &apos;Rappeler&apos;.</string>
-    <string name="help_q7_title">Comment configurer un rappel pour la messe ?</string>
-    <string name="help_q7_desc">Cliquez sur le bouton &apos;Paroisse la plus proche&apos;, puis choisissez l&apos;heure de la messe. Cliquez sur &apos;Rappeler&apos; et indiquez combien de minutes à l&apos;avance nous devons vous notifier.</string>
-    <string name="help_q8_title">Comment désactiver un rappel programmé ?</string>
-    <string name="help_q8_desc">Allez dans le menu latéral (icône hamburger), choisissez &apos;Paramètres&apos;, puis &apos;Gérer la liste&apos; dans la section des notifications. Dans la liste, vous pouvez supprimer n&apos;importe quel rappel en cliquant sur l&apos;icône de la corbeille.</string>
+
     <string name="help_q9_title">Comment ajouter une nouvelle paroisse qui ne figure pas sur la liste ?</string>
     <string name="help_q9_desc">Vous pouvez le faire de deux manières : maintenez votre doigt sur la carte à l&apos;emplacement de l&apos;église et choisissez &apos;Ajouter une paroisse ici&apos;, ou utilisez le bouton &apos;+&apos; dans le menu latéral et remplissez le formulaire manuellement.</string>
+
     <string name="help_q10_title">À quoi sert le Mur de Prière ?</string>
     <string name="help_q10_desc">C&apos;est un lieu de prière communautaire mondial. Vous pouvez y demander du soutien ou vous joindre aux prières des autres. Vous choisissez vous-même la forme de la prière – d&apos;un court &apos;Notre Père&apos; à un chapelet entier ou une Neuvaine.</string>
-    <string name="help_q11_title">Comment partager une intention de prière sur Facebook ?</string>
-    <string name="help_q11_desc">Ouvrez le Mur de Prière dans le menu latéral. À côté de votre intention, vous trouverez un bouton de partage. Choisissez l&apos;arrière-plan qui correspond le mieux à votre demande et cliquez sur &apos;Partager l&apos;image&apos; en sélectionnant l&apos;application Facebook.</string>
+
     <string name="help_q12_title">Puis-je ajouter une paroisse polonaise depuis l&apos;étranger ?</string>
     <string name="help_q12_desc">Oui, tout à fait ! L&apos;application Ma Paroisse est mondiale. Vous pouvez ajouter des paroisses catholiques romaines de n&apos;importe où dans le monde – de Chicago à Oslo en passant par Sydney.</string>
+
     <string name="help_q13_title">Je suis prêtre – comment gérer ma paroisse dans l&apos;application ?</string>
     <string name="help_q13_desc">La possibilité d&apos;ajouter des intentions de messe officielles et des annonces paroissiales est convenue individuellement. Veuillez nous contacter à biuro.mojaparafia@gmail.com – nous préparerons une offre de coopération.</string>
+
     <string name="help_q14_title">Comment vérifier mes points et ce que je reçois en échange ?</string>
     <string name="help_q14_desc">Vous pouvez vérifier vos points d&apos;Ambassadeur dans le menu latéral. 10 pts vous donnent le statut &apos;Couronne&apos; (mettant en valeur vos intentions), 50 pts le statut &apos;Premium&apos; (désactivation des publicités), et avec 200 pts, vous recevrez un T-shirt gratuit de notre part !</string>
-    <string name="help_q15_title">Que faire si je vois des horaires de messes erronés ?</string>
-    <string name="help_q15_desc">Si vous remarquez une erreur, allez dans les détails de la paroisse et cliquez sur &apos;Proposer une modification&apos;. Votre demande sera vérifiée, et après correction des données, vous recevrez un point d&apos;Ambassadeur !</string>
+    
     <string name="help_q16_title">Comment retourner rapidement à ma paroisse ?</string>
     <string name="help_q16_desc">Dans les détails de la paroisse, cliquez sur l&apos;icône [icon]. La paroisse sera ajoutée à vos favoris, auxquels vous avez un accès rapide via le panneau latéral de la carte (icône de cœur).</string>
+
     <string name="help_q17_title">L&apos;application est-elle payante ?</string>
     <string name="help_q17_desc">L&apos;utilisation de l&apos;application Ma Paroisse est entièrement gratuite. Les publicités affichées nous aident à couvrir les frais de serveur. Si vous souhaitez les désactiver gratuitement, il vous suffit de collecter 50 points d&apos;Ambassadeur !</string>
+
     <string name="help_q18_title">À quoi sert la paroisse d&apos;attache ?</string>
     <string name="help_q18_desc">Grâce à cela, le nom de la paroisse d&apos;où l&apos;intention a été envoyée apparaît sur le Mur de Prière. Cela permet de construire une communauté locale au sein de notre espace de prière mondial.</string>
+
     <string name="intention_wall_toast_candle_lit">Lumière allumée !</string>
     <string name="intention_wall_toast_candle_error">Erreur du serveur. Veuillez réessayer.</string>
     <string name="intention_wall_get_candles">Obtenez des bougies !</string>

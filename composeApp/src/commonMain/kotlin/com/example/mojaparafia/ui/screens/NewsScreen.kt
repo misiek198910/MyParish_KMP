@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.mojaparafia.model.NewsResponse
-import com.example.mojaparafia.ui.components.AdBanner
 import com.example.mojaparafia.viewmodel.ParishListViewModel
 import com.russhwolf.settings.Settings
 import myparish.composeapp.generated.resources.Res
@@ -32,7 +31,6 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun NewsScreen(
     viewModel: ParishListViewModel,
-    isPremium: Boolean,
     onBackClick: () -> Unit
 ) {
     val newsList by viewModel.newsList.collectAsState()
@@ -71,13 +69,6 @@ fun NewsScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
-            }
-        },
-        bottomBar = {
-            if (!isPremium) {
-                Box(modifier = Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars)) {
-                    AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = isPremium)
-                }
             }
         },
         containerColor = Color(0xFFF5F7FA)

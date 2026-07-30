@@ -17,7 +17,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mojaparafia.ui.components.AdBanner
 import kotlinx.coroutines.launch
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
@@ -32,7 +31,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 fun AddParishScreen(
     initialLat: String,
     initialLng: String,
-    isPremium: Boolean,
     onBackClick: () -> Unit,
     viewModel: com.example.mojaparafia.viewmodel.ParishListViewModel,
     onSubmitClick: (Map<String, String>) -> Unit,
@@ -101,13 +99,6 @@ fun AddParishScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
-            },
-            bottomBar = {
-                if (!isPremium) {
-                    Box(modifier = Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars)) {
-                        AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = isPremium)
-                    }
-                }
             },
             containerColor = Color(0xFFF5F7FA)
         ) { paddingValues ->

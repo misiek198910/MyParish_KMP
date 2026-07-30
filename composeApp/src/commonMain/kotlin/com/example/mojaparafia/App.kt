@@ -19,12 +19,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import com.example.mojaparafia.util.ReminderScheduler
 import com.example.mojaparafia.ui.screens.MainScreen
-import com.example.mojaparafia.ui.screens.SubscriptionScreen
 import com.example.mojaparafia.ui.screens.WelcomeScreen
 import com.example.mojaparafia.ui.screens.ParishDetailScreen
 import com.example.mojaparafia.ui.screens.RemindersScreen
 import com.example.mojaparafia.ui.screens.AddParishScreen
-import com.example.mojaparafia.ui.screens.AmbassadorScreen
 import com.example.mojaparafia.ui.screens.HelpScreen
 import com.example.mojaparafia.ui.screens.NewsScreen
 import com.example.mojaparafia.ui.screens.ProposeChangeScreen
@@ -38,10 +36,8 @@ sealed class Screen {
     object Main : Screen()
     data class ParishDetails(val parishId: String) : Screen()
     object Reminders : Screen()
-    object Subscriptions : Screen()
     data class AddParish(val lat: Double, val lng: Double) : Screen()
     object Help : Screen()
-    object Ambassador : Screen()
     object News : Screen()
     data class ProposeChange(val parishId: String, val parishName: String) : Screen()
 }
@@ -58,13 +54,6 @@ fun App(
     onOpenPrivacyPolicy: () -> Unit,
     onOpenSystemSettings: () -> Unit,
     onRestartAppRequired: (String?) -> Unit,
-
-    monthlyPriceStr: String? = null,
-    yearlyPriceStr: String? = null,
-    onBuyMonthlyClick: () -> Unit = {},
-    onBuyYearlyClick: () -> Unit = {},
-    onManageSubscriptionsClick: () -> Unit = {},
-    onRestorePurchasesClick: () -> Unit = {},
     isIos: Boolean = false,
     onSubmitNewParish: (Map<String, String>) -> Unit = {}
 
@@ -112,12 +101,9 @@ fun App(
                     isLandscape = false,
                     onNavigateToAddParish = { lat, lng -> currentScreen = Screen.AddParish(lat, lng) },
                     onNavigateToDetails = { id -> currentScreen = Screen.ParishDetails(id) },
-                    onNavigateToIntentions = {},
                     onOpenSettings = {},
                     onOpenNews = { currentScreen = Screen.News },
-                    onOpenAmbassador = { currentScreen = Screen.Ambassador },
                     onOpenHelp = { currentScreen = Screen.Help },
-                    onNavigateToSubscriptions = { currentScreen = Screen.Subscriptions },
                     onBuyCoffee = { uriHandler.openUri("https://buycoffee.to/mivs/MojaParafia") },
                     onOpenReminders = { currentScreen = Screen.Reminders },
                     onOpenPrivacyPolicy = onOpenPrivacyPolicy,
@@ -130,18 +116,13 @@ fun App(
                     val parish by viewModel.getParishById(detailsScreen.parishId).collectAsState(initial = null)
 
                     val homeParishId by viewModel.homeParishId.collectAsState(initial = null)
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
-                    val effectivePremium = isPremium || userPoints >= 50
 
                     if (parish != null) {
                         ParishDetailScreen(
                             parish = parish!!,
                             isHomeParish = homeParishId == parish!!.id,
                             isLandscape = false,
-                            effectivePremium = effectivePremium,
                             isParishActive = true,
-                            onBackClick = { currentScreen = Screen.Main },
                             onProposeChangeClick = { currentScreen = Screen.ProposeChange(parish!!.id, parish!!.name ?: "Nieznana") },
                             onToggleFavorite = { viewModel.toggleFavorite(parish!!) },
                             onToggleHomeParish = { viewModel.toggleHomeParish(parish!!.id) { } },
@@ -161,44 +142,21 @@ fun App(
                     }
                 }
 
-                if (currentScreen is Screen.Subscriptions) {
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-
-                    SubscriptionScreen(
-                        isPremium = isPremium,
-                        userPoints = userPoints,
-                        monthlyPriceStr = monthlyPriceStr,
-                        yearlyPriceStr = yearlyPriceStr,
-                        onBackClick = { currentScreen = Screen.Main },
-                        onBuyMonthlyClick = onBuyMonthlyClick,
-                        onBuyYearlyClick = onBuyYearlyClick,
-                        onManageClick = onManageSubscriptionsClick,
-                        onRestoreClick = onRestorePurchasesClick,
-                        isIos = isIos
-                    )
-                }
-
                 if (currentScreen is Screen.Reminders) {
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
 
                     RemindersScreen(
                         viewModel = viewModel,
                         reminderScheduler = reminderScheduler,
-                        onBackClick = { currentScreen = Screen.Main },
-                        isPremium = isPremium
+                        onBackClick = { currentScreen = Screen.Main }
                     )
                 }
 
                 if (currentScreen is Screen.AddParish) {
                     val addParishScreen = currentScreen as Screen.AddParish
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
 
                     AddParishScreen(
                         initialLat = if (addParishScreen.lat != 0.0) addParishScreen.lat.toString() else "",
                         initialLng = if (addParishScreen.lng != 0.0) addParishScreen.lng.toString() else "",
-                        isPremium = isPremium || userPoints >= 50,
                         onBackClick = { currentScreen = Screen.Main },
                         viewModel = viewModel,
                         onSubmitClick = { data ->
@@ -212,37 +170,16 @@ fun App(
                 }
 
                 if (currentScreen is Screen.Help) {
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
-
                     HelpScreen(
-                        isPremium = isPremium || userPoints >= 50,
-                        onBackClick = { currentScreen = Screen.Main },
-                        showToast = showToast
-                    )
-                }
-
-                if (currentScreen is Screen.Ambassador) {
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-                    val effectivePremium = isPremium || userPoints >= 50
-
-                    AmbassadorScreen(
-                        points = userPoints,
-                        isPremium = effectivePremium,
                         onBackClick = { currentScreen = Screen.Main },
                         showToast = showToast
                     )
                 }
 
                 if (currentScreen is Screen.News) {
-                    val userPoints by viewModel.userPoints.collectAsState(initial = 0)
-                    val isPremium by viewModel.isPremium.collectAsState(initial = false)
-                    val effectivePremium = isPremium || userPoints >= 50
 
                     NewsScreen(
                         viewModel = viewModel,
-                        isPremium = effectivePremium,
                         onBackClick = { currentScreen = Screen.Main }
                     )
                 }

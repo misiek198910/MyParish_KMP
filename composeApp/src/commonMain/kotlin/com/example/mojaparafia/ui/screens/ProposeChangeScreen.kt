@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mojaparafia.ui.components.AdBanner
 import com.example.mojaparafia.viewmodel.ParishListViewModel
 import kotlinx.coroutines.launch
 import myparish.composeapp.generated.resources.Res
@@ -48,10 +47,6 @@ fun ProposeChangeScreen(
 
     val parishToEdit by viewModel.getParishById(parishId).collectAsState(initial = null)
     val formState = remember { mutableStateMapOf<String, String>() }
-
-    val isPremium by viewModel.isPremium.collectAsState(false)
-    val userPoints by viewModel.userPoints.collectAsState(0)
-    val effectivePremium = isPremium || userPoints >= 50
 
     LaunchedEffect(parishToEdit) {
         parishToEdit?.let { p ->
@@ -113,13 +108,6 @@ fun ProposeChangeScreen(
                         },
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                     )
-                }
-            },
-            bottomBar = {
-                if (!effectivePremium) {
-                    Box(modifier = Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars)) {
-                        AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = effectivePremium)
-                    }
                 }
             },
             containerColor = Color(0xFFF5F7FA)

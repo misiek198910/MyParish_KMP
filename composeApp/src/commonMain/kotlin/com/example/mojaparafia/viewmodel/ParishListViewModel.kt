@@ -86,17 +86,11 @@ class ParishListViewModel : ViewModel() {
 
     val allParishes: StateFlow<List<ParishEntity>> = parishRepository.parishes
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-    private val _isPremium = MutableStateFlow(false)
-    val isPremium: StateFlow<Boolean> = _isPremium.asStateFlow()
-
     private val _isSyncing = MutableStateFlow(false)
     val isSyncing: StateFlow<Boolean> = _isSyncing.asStateFlow()
 
     private val _newsList = MutableStateFlow<List<NewsResponse>>(emptyList())
     val newsList: StateFlow<List<NewsResponse>> = _newsList.asStateFlow()
-
-    private val _intentions = MutableStateFlow<List<Intention>>(emptyList())
-    val intentions: StateFlow<List<Intention>> = _intentions.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -136,10 +130,6 @@ class ParishListViewModel : ViewModel() {
         }
     }
 
-    fun updatePremiumStatus(hasPremium: Boolean) {
-        _isPremium.value = hasPremium
-    }
-
     fun performInitialSyncAndFinish(onError: () -> Unit) {
         if (!_isFirstRun.value) return
         viewModelScope.launch(Dispatchers.Default) {
@@ -176,161 +166,6 @@ class ParishListViewModel : ViewModel() {
             try {
                  //apiService.sendCollaborationRequest(parishId, CollaborationRequest(email))
             } catch (e: Exception) {
-            }
-        }
-    }
-
-    fun fetchIntentions() {
-        if (_deviceId.value.isEmpty()) return
-        viewModelScope.launch(Dispatchers.Default) {
-            _isLoading.value = true
-            try {
-                val intentList = apiService.getIntentions(_deviceId.value)
-                if (intentList != null) {
-                    _intentions.value = intentList
-                }
-            } catch (e: Exception) {
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun addIntention(content: String, category: String, isAnonymous: Boolean, countryCode: String, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val request = AddIntentionRequest(
-                    content,
-                    _deviceId.value,
-                    category,
-                    isAnonymous,
-                    countryCode
-                )
-                val success = apiService.addIntention(request)
-
-                withContext(Dispatchers.Main) {
-                    if (success) {
-                        fetchIntentions()
-                    }
-                    onComplete(success)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) { onComplete(false) }
-            }
-        }
-    }
-
-    fun updateIntention(intentionId: Int, content: String, category: String, isAnonymous: Boolean, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val request = UpdateIntentionRequest(
-                    intentionId,
-                    _deviceId.value,
-                    content,
-                    category,
-                    isAnonymous
-                )
-                val success = apiService.updateIntention(request)
-
-                withContext(Dispatchers.Main) {
-                    if (success) fetchIntentions()
-                    onComplete(success)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) { onComplete(false) }
-            }
-        }
-    }
-
-    fun deleteIntention(intentionId: Int) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val request = DeleteIntentionRequest(id = intentionId, deviceId = _deviceId.value)
-                if (apiService.deleteIntention(request)) {
-                    fetchIntentions()
-                    syncParishes()
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
-
-    fun prayForIntention(intentionId: Int) {
-        val currentList = _intentions.value.toMutableList()
-        val index = currentList.indexOfFirst { it.id == intentionId }
-
-        if (index != -1) {
-            val item = currentList[index]
-            val isNowPraying = !item.prayedByMe
-            val newCount = if (isNowPraying) item.prayerCount + 1 else item.prayerCount - 1
-            currentList[index] = item.copy(
-                prayedByMe = isNowPraying,
-                prayerCount = newCount
-            )
-            _intentions.value = currentList
-        }
-
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val request = PrayRequest(intentionId, _deviceId.value)
-                apiService.registerPrayer(request)
-                fetchIntentions()
-            } catch (e: Exception) {
-                fetchIntentions()
-            }
-        }
-    }
-
-    fun togglePin(intentionId: Int) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                if (apiService.pinIntention(PinRequest(intentionId, _deviceId.value))) {
-                    fetchIntentions()
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
-
-    fun renewIntention(intentionId: Int, days: Int, onResult: (Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val success =
-                    apiService.renewIntention(RenewRequest(intentionId, _deviceId.value, days))
-                withContext(Dispatchers.Main) { onResult(success) }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) { onResult(false) }
-            }
-        }
-    }
-
-    fun lightCandle(intentionId: Int, candleType: String, durationHours: Int, onComplete: (Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val request =
-                    LightCandleRequest(intentionId, _deviceId.value, candleType, durationHours)
-                val success = apiService.lightCandle(request)
-
-                withContext(Dispatchers.Main) {
-                    if (success) {
-                        fetchIntentions()
-                    }
-                    onComplete(success)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) { onComplete(false) }
-            }
-        }
-    }
-
-    fun extinguishCandle(candleId: Int, onResult: (Boolean) -> Unit) {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val success =
-                    apiService.extinguishCandle(ExtinguishRequest(candleId, _deviceId.value))
-                withContext(Dispatchers.Main) { onResult(success) }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) { onResult(false) }
             }
         }
     }
@@ -550,7 +385,6 @@ class ParishListViewModel : ViewModel() {
 
         if (deviceIdStr.isNotEmpty()) {
             fetchUserStats()
-            fetchIntentions()
             fetchNews()
         }
     }

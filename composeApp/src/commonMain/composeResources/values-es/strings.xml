@@ -363,34 +363,37 @@
     <string name="help_flame_cd">Asistente Llamita</string>
     <string name="help_no_email_app">No se encontró una aplicación de correo</string>
     <string name="help_email_subject">Pregunta para Llamita</string>
+
     <string name="help_q1_title">¿Cómo encontrar una parroquia en el mapa?</string>
     <string name="help_q1_desc">Usa el icono de la lupa en la esquina superior derecha para escribir el nombre de la ciudad o de la parroquia. También puedes hacer clic en el icono [icon] en el panel lateral para centrar el mapa inmediatamente en tu ubicación.</string>
+
     <string name="help_q5_title">¿Qué pasa si no quiero dar mi ubicación?</string>
     <string name="help_q5_desc">Compartir tu ubicación no es obligatorio, pero sin ella la aplicación no mostrará tu posición en el mapa ni indicará automáticamente las Misas más cercanas. Tu ubicación se usa exclusivamente para la navegación en el mapa y no es recopilada ni utilizada por nosotros de ninguna otra forma.</string>
+
     <string name="help_q6_title">¿Cómo encuentro la Misa más cercana?</string>
     <string name="help_q6_desc">Debajo del botón de tu ubicación se encuentra el icono [icon]. Al hacer clic, se abrirá una tarjeta con los próximos servicios y las opciones &apos;Navegar&apos; o &apos;Recordar&apos;.</string>
-    <string name="help_q7_title">¿Cómo configuro un recordatorio para la Misa?</string>
-    <string name="help_q7_desc">Haz clic en el botón Parroquia más cercana&apos; y luego elige la hora de la Misa que desees. Haz clic en el botón &apos;Recordar&apos; e indica cuántos minutos antes de la Misa quieres que te notifiquemos.</string>
-    <string name="help_q8_title">¿Cómo desactivo un recordatorio programado?</string>
-    <string name="help_q8_desc">Ve al menú lateral (icono de hamburguesa), selecciona &apos;Ajustes&apos; y luego &apos;Administrar lista&apos; en la sección de notificaciones. En la lista, puedes eliminar cualquier recordatorio haciendo clic en el icono de la papelera.</string>
+
     <string name="help_q9_title">¿Cómo añado una nueva parroquia que no está en la lista?</string>
     <string name="help_q9_desc">Puedes hacerlo de dos formas: mantén el dedo sobre el mapa en el lugar donde se encuentra la iglesia y selecciona &apos;Añadir parroquia aquí&apos;, o usa el botón &apos;+&apos; en el menú lateral y rellena el formulario manualmente.</string>
+
     <string name="help_q10_title">¿Para qué sirve el Muro de Intenciones?</string>
     <string name="help_q10_desc">Es un lugar de oración comunitaria mundial. Puedes pedir apoyo aquí o unirte a las oraciones de otras personas. Tú mismo eliges la forma de la oración, desde un breve &apos;Padre Nuestro&apos; hasta el Rosario completo o una Novena.</string>
-    <string name="help_q11_title">¿Cómo comparto una intención en Facebook?</string>
-    <string name="help_q11_desc">Abre el Muro de Intenciones en el menú lateral. Junto a tu intención encontrarás un botón para compartir. Elige el fondo que mejor se adapte a tu petición y haz clic en &apos;Compartir imagen&apos; seleccionando la aplicación de Facebook.</string>
+
     <string name="help_q12_title">¿Puedo añadir una parroquia polaca desde el extranjero?</string>
     <string name="help_q12_desc">¡Sí, por supuesto! La aplicación Mi Parroquia es global. Puedes añadir parroquias católicas de cualquier rincón del mundo, desde Chicago hasta Oslo o Sídney.</string>
+
     <string name="help_q13_title">Soy sacerdote – ¿cómo gestiono mi parroquia en la aplicación?</string>
     <string name="help_q13_desc">La posibilidad de añadir intenciones de misa oficiales y avisos por parte de la parroquia se acuerda de forma individual. Por favor contáctanos en biuro.mojaparafia@gmail.com; prepararemos una propuesta de colaboración.</string>
+
     <string name="help_q14_title">¿Cómo reviso cuántos puntos tengo y qué consigo por ellos?</string>
     <string name="help_q14_desc">Puedes comprobar tus puntos de Embajador en el menú lateral. 10 pts te otorgan el estado de &apos;Corona&apos; (resalta tus intenciones), 50 pts el estado &apos;Premium&apos; (desactiva anuncios) y con 200 pts puedes conseguir una camiseta gratuita nuestra.</string>
-    <string name="help_q15_title">¿Qué hago si veo horarios de Misa incorrectos?</string>
-    <string name="help_q15_desc">Si notas un error, entra en los detalles de esa parroquia y haz clic en el botón &apos;Proponer un cambio&apos;. Tu solicitud será enviada para verificación, y una vez corregidos los datos, ¡recibirás un punto de Embajador!</string>
+    
     <string name="help_q16_title">¿Cómo regreso rápidamente a mi parroquia?</string>
     <string name="help_q16_desc">En los detalles de la parroquia, haz clic en el icono [icon]. La parroquia se añadirá a tus favoritas, a las cuales tienes acceso rápido desde el panel lateral del mapa (icono de corazón).</string>
+
     <string name="help_q17_title">¿La aplicación es de pago?</string>
     <string name="help_q17_desc">El uso de la aplicación Mi Parroquia es totalmente gratuito. Los anuncios mostrados nos ayudan a cubrir los costes de los servidores. Si quieres desactivarlos gratis, ¡solo necesitas conseguir 50 puntos de Embajador!</string>
+
     <string name="help_q18_title">¿Para qué sirve la parroquia de origen?</string>
     <string name="help_q18_desc">Gracias a ello, el nombre de la parroquia desde la cual se envió la intención aparece en el Muro de Intenciones. Esto ayuda a construir una comunidad local dentro de nuestro espacio de oración global.</string>
     <string name="intention_wall_toast_candle_lit">¡Luz encendida!</string>

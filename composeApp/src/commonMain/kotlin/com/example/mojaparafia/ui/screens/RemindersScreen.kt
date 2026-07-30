@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mojaparafia.ui.components.AdBanner
 import com.example.mojaparafia.util.Reminder
 import com.example.mojaparafia.util.ReminderScheduler
 import com.example.mojaparafia.viewmodel.ParishListViewModel
@@ -36,12 +35,9 @@ import org.jetbrains.compose.resources.stringResource
 fun RemindersScreen(
     viewModel: ParishListViewModel,
     reminderScheduler: ReminderScheduler,
-    onBackClick: () -> Unit,
-    isPremium: Boolean
+    onBackClick: () -> Unit
 ) {
     val reminders by viewModel.remindersList.collectAsState(emptyList())
-    val userPoints by viewModel.userPoints.collectAsState(0)
-    val effectivePremium = isPremium || userPoints >= 50
 
     val futureReminders = remember(reminders) {
         val currentMoment = Clock.System.now()
@@ -78,18 +74,6 @@ fun RemindersScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
-            }
-        },
-        bottomBar = {
-            if (!effectivePremium) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White.copy(alpha = 0.65f))
-                        .windowInsetsPadding(WindowInsets.navigationBars)
-                ) {
-                    AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = effectivePremium)
-                }
             }
         },
         containerColor = Color(0xFFF5F7FA)

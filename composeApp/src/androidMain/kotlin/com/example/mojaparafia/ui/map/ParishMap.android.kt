@@ -164,7 +164,6 @@ actual fun ParishMap(
         update = {
             mMap?.let { map ->
                 try {
-                    // 🔥 ZMIANA: Wywołanie aktualizacji stylu na podstawie wyliczonej zmiennej `isMapDark`
                     if (isMapDark) {
                         map.setMapStyle(MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style_dark))
                     } else {

@@ -363,36 +363,40 @@
     <string name="help_flame_cd">Gnisten Assistent</string>
     <string name="help_no_email_app">Ingen e-postapp funnet</string>
     <string name="help_email_subject">Spørsmål til Gnisten</string>
+
     <string name="help_q1_title">Hvordan finner jeg en menighet på kartet?</string>
     <string name="help_q1_desc">Bruk forstørrelsesglasset øverst til høyre for å skrive inn byens eller menighetens navn. Du kan også klikke på ikonet [icon] i sidepanelet for å sentrere kartet på posisjonen din.</string>
+
     <string name="help_q5_title">Hva om jeg ikke vil dele plasseringen min?</string>
     <string name="help_q5_desc">Deling av plassering er ikke obligatorisk, men uten det vil ikke appen vise posisjonen din på kartet eller automatisk vise nærmeste messe. Posisjonen din brukes utelukkende til navigasjon på kartet og samles ikke inn eller brukes på noen annen måte av oss.</string>
+
     <string name="help_q6_title">Hvordan finner jeg nærmeste messe?</string>
     <string name="help_q6_desc">Under knappen for din posisjon finner du ikonet [icon]. Når du klikker på den, åpnes et kort med kommende messer og alternativene &apos;Naviger&apos; eller &apos;Påminn meg&apos;.</string>
-    <string name="help_q7_title">Hvordan setter jeg en påminnelse om en messe?</string>
-    <string name="help_q7_desc">Klikk på knappen &apos;Nærmeste menighet&apos; og velg ønsket tidspunkt for messen. Klikk på &apos;Påminn meg&apos;-knappen og angi hvor mange minutter før gudstjenesten vi skal varsle deg.</string>
-    <string name="help_q8_title">Hvordan slår jeg av en innstilt påminnelse?</string>
-    <string name="help_q8_desc">Gå til sidemenyen (hamburgerikonet), velg &apos;Innstillinger&apos;, og deretter &apos;Administrer liste&apos; under varsler. I listen kan du slette hvilken som helst påminnelse ved å klikke på søppelbøtteikonet.</string>
+
     <string name="help_q9_title">Hvordan legger jeg til en ny menighet som ikke er i listen?</string>
     <string name="help_q9_desc">Du kan gjøre dette på to måter: Hold fingeren på kartet der kirken ligger og velg &apos;Legg til menighet her&apos;, eller bruk &apos;+&apos;-knappen i sidemenyen og fyll ut skjemaet manuelt.</string>
+
     <string name="help_q10_title">Hva brukes Bønneveggen til?</string>
     <string name="help_q10_desc">Det er et sted for verdensomspennende felles bønn. Du kan be om støtte her eller bli med i andres bønner. Du velger formen på bønnen selv – fra et kort &apos;Fader vår&apos; til en hel rosenkrans eller novene.</string>
-    <string name="help_q11_title">Hvordan deler jeg et bønneemne på Facebook?</string>
-    <string name="help_q11_desc">Åpne Bønneveggen fra sidemenyen. Ved bønneemnet ditt finner du en deleknapp. Velg bakgrunnen som passer best til forespørselen din, og klikk &apos;Del bilde&apos; ved å velge Facebook-appen.</string>
+
     <string name="help_q12_title">Kan jeg legge til en polsk menighet i utlandet?</string>
     <string name="help_q12_desc">Ja, absolutt! Appen Min Menighet er global. Du kan legge til romersk-katolske menigheter fra ethvert hjørne av verden – fra Chicago til Oslo eller Sydney.</string>
+
     <string name="help_q13_title">Jeg er prest – hvordan administrerer jeg menigheten min i appen?</string>
     <string name="help_q13_desc">Muligheten for å legge til offisielle messeintensjoner og kunngjøringer fra menigheten avtales individuelt. Vennligst kontakt oss på biuro.mojaparafia@gmail.com – vi vil utarbeide et samarbeidstilbud.</string>
+
     <string name="help_q14_title">Hvordan sjekker jeg poengene mine og hva får jeg for dem?</string>
     <string name="help_q14_desc">Du kan sjekke ambassadørpoengene dine i sidemenyen. 10 poeng gir &apos;Krone&apos;-status (fremheving av bønneemnene dine), 50 poeng gir &apos;Premium&apos;-status (deaktivering av annonser), og 200 poeng lar deg få en gratis T-skjorte fra oss!</string>
-    <string name="help_q15_title">Hva om jeg ser feil messetider?</string>
-    <string name="help_q15_desc">Hvis du oppdager en feil, gå til detaljene for den aktuelle menigheten og klikk på &apos;Foreslå en endring&apos;. Forslaget ditt vil bli sendt til verifisering, og etter at dataene er rettet, vil du motta et ambassadørpoeng fra oss!</string>
+    
     <string name="help_q16_title">Hvordan kan jeg raskt gå tilbake til menigheten min?</string>
     <string name="help_q16_desc">I menighetsdetaljene klikker du på ikonet [icon]. Menigheten vil bli lagt til favorittene dine, som du har rask tilgang til via sidepanelet på kartet (hjerteikon).</string>
+
     <string name="help_q17_title">Koster appen penger?</string>
     <string name="help_q17_desc">Bruk av Min Menighet-appen er helt gratis. Annonsene som vises hjelper oss å dekke serverkostnader. Hvis du vil slå dem av gratis, trenger du bare å skaffe deg 50 ambassadørpoeng!</string>
+
     <string name="help_q18_title">Hva brukes hjemmemenigheten til?</string>
     <string name="help_q18_desc">Takket være dette vises navnet på menigheten som bønneemnet ble sendt fra på Bønneveggen. Dette bidrar til å bygge et lokalt fellesskap i vårt globale bønnerom.</string>
+
     <string name="intention_wall_toast_candle_lit">Lys tent!</string>
     <string name="intention_wall_toast_candle_error">Serverfeil. Prøv igjen.</string>
     <string name="intention_wall_get_candles">Skaff deg lys!</string>

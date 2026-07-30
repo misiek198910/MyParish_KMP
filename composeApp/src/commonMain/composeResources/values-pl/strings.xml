@@ -364,34 +364,37 @@
     <string name="help_email_subject">Pytanie do Płomyka</string>
     <string name="help_q1_title">Jak znaleźć parafię na mapie?</string>
     <string name="help_q1_desc">Użyj ikony lupy w prawym górnym rogu, aby wpisać nazwę miejscowości lub parafii. Możesz też kliknąć ikonę [icon] w panelu bocznym, aby natychmiast wycentrować mapę na Twojej lokalizacji.</string>
+
     <string name="help_q5_title">Co jeśli nie chcę podawać swojej lokalizacji?</string>
     <string name="help_q5_desc">Udostępnienie lokalizacji nie jest obowiązkowe, ale bez niej aplikacja nie wyświetli Twojej pozycji na mapie ani nie wskaże automatycznie najbliższych Mszy św. Twoja lokalizacja służy wyłącznie do nawigacji na mapie i nie jest przez nas w żaden inny sposób gromadzona ani wykorzystywana.</string>
+
     <string name="help_q6_title">Jak znaleźć najbliższą Mszę św.?</string>
     <string name="help_q6_desc">Pod przyciskiem Twojej pozycji znajduje się ikona [icon]. Po jej kliknięciu otworzy się karta z najbliższymi nabożeństwami oraz opcjami &apos;Nawiguj&apos; lub &apos;Przypomnij&apos;.</string>
-    <string name="help_q7_title">Jak ustawić przypomnienie o Mszy św.?</string>
-    <string name="help_q7_desc">Kliknij przycisk &apos;Najbliższa parafia&apos;, a następnie wybierz interesującą Cię godzinę Mszy św. Kliknij przycisk &apos;Przypomnij&apos; i określ, na ile minut przed nabożeństwem mamy Cię powiadomić.</string>
-    <string name="help_q8_title">Jak wyłączyć ustawione przypomnienie?</string>
-    <string name="help_q8_desc">Wejdź w boczne menu (ikona hamburgera), wybierz &apos;Ustawienia&apos;, a następnie &apos;Zarządzaj Listą&apos; w sekcji powiadomień. Na liście możesz usunąć dowolne przypomnienie, klikając ikonę kosza.</string>
+
     <string name="help_q9_title">Jak dodać nową parafię, której nie ma w spisie?</string>
     <string name="help_q9_desc">Możesz to zrobić na dwa sposoby: przytrzymaj palec na mapie w miejscu, gdzie znajduje się kościół i wybierz &apos;Dodaj tu parafię&apos; lub użyj przycisku &apos;+&apos; w menu bocznym i wypełnij formularz ręcznie.</string>
+
     <string name="help_q10_title">Do czego służy Ściana Intencji?</string>
     <string name="help_q10_desc">To miejsce ogólnoświatowej modlitwy wspólnotowej. Możesz tu prosić o wsparcie lub dołączyć do modlitwy innych osób. Formę modlitwy wybierasz sam – od krótkiego &apos;Ojcze Nasz&apos; po cały Różaniec czy Nowennę.</string>
-    <string name="help_q11_title">Jak udostępnić intencję na Facebooku?</string>
-    <string name="help_q11_desc">Otwórz Ścianę Intencji z menu bocznego. Przy swojej intencji znajdziesz przycisk udostępniania. Wybierz tło, które najlepiej pasuje do Twojej prośby, i kliknij &apos;Udostępnij obraz&apos;, wybierając aplikację Facebook.</string>
+
     <string name="help_q12_title">Czy mogę dodać polską parafię z zagranicy?</string>
     <string name="help_q12_desc">Tak, jak najbardziej! Aplikacja Twoja Parafia jest globalna. Możesz dodawać parafie rzymskokatolickie z każdego zakątka świata – od Chicago po Oslo czy Sydney.</string>
+
     <string name="help_q13_title">Jestem proboszczem – jak zarządzać moją parafią w aplikacji?</string>
     <string name="help_q13_desc">Możliwość dodawania oficjalnych intencji mszalnych i ogłoszeń przez parafię ustalamy indywidualnie. Prosimy o kontakt na adres biuro.mojaparafia@gmail.com – przygotujemy ofertę współpracy.</string>
+
     <string name="help_q14_title">Jak sprawdzić ile mam punktów i co za nie dostanę?</string>
     <string name="help_q14_desc">Swoje punkty Ambasadora sprawdzisz w menu bocznym. 10 pkt to status &apos;Korona&apos; (wyróżnienie Twoich intencji), 50 pkt to status &apos;Premium&apos; (wyłączenie reklam), a 200 pkt pozwala otrzymać od nas darmową koszulkę!</string>
-    <string name="help_q15_title">Co jeśli widzę błędne godziny Mszy św.?</string>
-    <string name="help_q15_desc">Jeśli zauważysz błąd, wejdź w szczegóły danej parafii i kliknij przycisk &apos;Zaproponuj zmianę&apos;. Twoje zgłoszenie trafi do weryfikacji, a po poprawieniu danych otrzymasz od nas punkt Ambasadora!</string>
+
     <string name="help_q16_title">Jak szybko wracać do mojej parafii?</string>
     <string name="help_q16_desc">W szczegółach parafii kliknij ikonę [icon]. Parafia trafi do Twoich ulubionych, do których masz błyskawiczny dostęp przez panel boczny mapy (ikona serca).</string>
+
     <string name="help_q17_title">Czy aplikacja jest płatna?</string>
     <string name="help_q17_desc">Korzystanie z aplikacji Twoja Parafia jest całkowicie darmowe. Wyświetlane reklamy pomagają nam pokryć koszty serwerów. Jeśli chcesz je wyłączyć za darmo, wystarczy zdobyć 50 punktów Ambasadora!</string>
+
     <string name="help_q18_title">Do czego służy parafia domowa?</string>
     <string name="help_q18_desc">Dzięki temu na Ścianie Intencji pojawia się nazwa parafii, z której została nadana intencja. Pozwala to na budowanie lokalnej wspólnoty w naszej globalnej przestrzeni modlitwy.</string>
+
     <string name="intention_wall_toast_candle_lit">Światło zapalone!</string>
     <string name="intention_wall_toast_candle_error">Błąd serwera. Spróbuj ponownie.</string>
     <string name="intention_wall_get_candles">Zdobądź świece!</string>
@@ -495,4 +498,16 @@
     <string name="dialog_btn_ok">Rozumiem</string>
     <string name="banner_missing_parish_title">Nie ma Twojej parafii na mapie? Kliknij</string>
     <string name="banner_missing_parish_desc">Przytrzymaj palcem na mapie miejsce, w którym znajduje się parafia, i dodaj ją. Każde zgłoszenie weryfikujemy i uzupełniamy o aktualne dane!</string>
+
+
+
+
+
+    <string name="nav_map">Mapa</string>
+    <string name="nav_home_parish">Moja Parafia</string>
+    <string name="nav_more">Święci</string>
+    <string name="home_parish_not_selected_title">Brak parafii domowej</string>
+    <string name="home_parish_not_selected_desc">Nie wybrałeś jeszcze swojej parafii domowej. Możesz to zrobić na mapie, klikając ikonę domku przy wybranej parafii.</string>
+    <string name="home_parish_go_to_map">Przejdź do mapy</string>
+    <string name="placeholder_screen_text">Ekran Kompendium Świętych (w budowie)</string>
 </resources>

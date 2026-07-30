@@ -7,18 +7,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import androidx.room.ConstructedBy
 import androidx.room.RoomDatabaseConstructor
-import com.example.mojaparafia.billing.SubscriptionDao
-import com.example.mojaparafia.billing.SubscriptionEntity
 
 @Database(
-    entities = [ParishEntity::class, SubscriptionEntity::class],
+    entities = [ParishEntity::class],
     version = 4,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun parishDao(): ParishDao
-    abstract fun subscriptionDao(): SubscriptionDao
 }
 
 fun createRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {

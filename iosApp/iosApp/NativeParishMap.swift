@@ -7,16 +7,11 @@ struct ParishMapData: Codable {
     let lat: Double
     let lng: Double
     let title: String
-    let subtitle: String
-    let hasExtras: Bool
-    let hasCandles: Bool
     let glyphText: String
 }
 
 class FastSwiftAnnotation: MKPointAnnotation {
     var parishId: String = ""
-    var hasExtras: Bool = false
-    var hasCandles: Bool = false
     var glyph: String = ""
 }
 
@@ -32,11 +27,9 @@ func drawPixelEmoji(_ text: String, size: CGFloat) -> UIImage {
 
 let imgChurch = drawPixelEmoji("⛪", size: 40)
 let imgCathedral = drawPixelEmoji("🕍", size: 44)
-let imgCrown = drawPixelEmoji("👑", size: 44)
 
 class FlatParishView: MKAnnotationView {
-    let pillLabel = UILabel()
-    
+
     override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         self.clusteringIdentifier = "parish_cluster"
@@ -45,26 +38,9 @@ class FlatParishView: MKAnnotationView {
         self.isAccessibilityElement = false
         self.accessibilityElementsHidden = true
         if #available(iOS 11.0, *) { self.collisionMode = .none }
-        
-        pillLabel.font = UIFont.systemFont(ofSize: 11, weight: .bold)
-        pillLabel.backgroundColor = UIColor(white: 0.1, alpha: 0.8)
-        pillLabel.textColor = .white
-        pillLabel.layer.cornerRadius = 6
-        pillLabel.layer.masksToBounds = true
-        pillLabel.textAlignment = .center
-        pillLabel.isHidden = true
-        addSubview(pillLabel)
     }
-    
+
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if !pillLabel.isHidden {
-            pillLabel.sizeToFit()
-            pillLabel.center = CGPoint(x: bounds.width / 2, y: -14)
-        }
-    }
 }
 
 class ParishClusterView: MKMarkerAnnotationView {
@@ -101,9 +77,8 @@ class ParishClusterView: MKMarkerAnnotationView {
         let region = MKCoordinateRegion(center: polandCenter, latitudinalMeters: 700000, longitudinalMeters: 700000)
         mapView.setRegion(region, animated: false)
 
-        // 🔥 NOWE: Konfiguracja i dodanie gestu długiego przytrzymania do mapy
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        longPressGesture.minimumPressDuration = 0.5 // Pół sekundy przytrzymania wywoła akcję
+        longPressGesture.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longPressGesture)
     }
 
@@ -126,7 +101,6 @@ class ParishClusterView: MKMarkerAnnotationView {
         self.mapView(self.mapView, regionDidChangeAnimated: false)
     }
 
-    // Zwróć uwagę na KotlinDouble zamiast Double
     func setOnMapLongClickListener(onLongClick: @escaping (KotlinDouble, KotlinDouble) -> Void) {
         self.onMapLongClick = onLongClick
     }
@@ -159,10 +133,7 @@ class ParishClusterView: MKMarkerAnnotationView {
                     let ann = FastSwiftAnnotation()
                     ann.coordinate = CLLocationCoordinate2D(latitude: p.lat, longitude: p.lng)
                     ann.title = p.title
-                    if !p.subtitle.isEmpty { ann.subtitle = p.subtitle }
                     ann.parishId = p.id
-                    ann.hasExtras = p.hasExtras
-                    ann.hasCandles = p.hasCandles
                     ann.glyph = p.glyphText
                     return ann
                 }
@@ -208,36 +179,8 @@ class ParishClusterView: MKMarkerAnnotationView {
         if let pAnn = annotation as? FastSwiftAnnotation {
             let view = mapView.dequeueReusableAnnotationView(withIdentifier: "FlatParishView", for: annotation) as! FlatParishView
 
-            if pAnn.glyph == "👑" { view.image = imgCrown }
-            else if pAnn.glyph == "🕍" { view.image = imgCathedral }
+            if pAnn.glyph == "🕍" { view.image = imgCathedral }
             else { view.image = imgChurch }
-
-            if pAnn.hasExtras, let subtitle = pAnn.subtitle, !subtitle.isEmpty {
-                view.pillLabel.text = "  \(subtitle)  "
-                view.pillLabel.isHidden = false
-                view.setNeedsLayout()
-            } else {
-                view.pillLabel.isHidden = true
-            }
-
-            if pAnn.hasCandles {
-                view.layer.shadowColor = UIColor.systemOrange.cgColor
-                view.layer.shadowOffset = .zero
-                view.layer.masksToBounds = false
-                view.layer.shadowRadius = 8.0
-                view.layer.shadowOpacity = 1.0
-
-                let glowRect = view.bounds.insetBy(dx: -6, dy: -6)
-                view.layer.shadowPath = UIBezierPath(ovalIn: glowRect).cgPath
-
-                view.layer.shouldRasterize = true
-                view.layer.rasterizationScale = UIScreen.main.scale
-
-            } else {
-                view.layer.shadowOpacity = 0.0
-                view.layer.shadowPath = nil
-                view.layer.shouldRasterize = false
-            }
 
             return view
         }

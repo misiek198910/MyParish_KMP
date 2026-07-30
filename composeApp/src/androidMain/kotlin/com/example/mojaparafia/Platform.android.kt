@@ -22,12 +22,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.FileProvider
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import java.io.File
 import java.io.FileOutputStream
@@ -65,23 +61,6 @@ actual fun isLandscapeOrientation(): Boolean {
     return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
 
-@Composable
-actual fun AdBannerView(modifier: Modifier) {
-    val context = LocalContext.current
-    val isLandscape = isLandscapeOrientation()
-
-    AndroidView(
-        modifier = modifier,
-        factory = { ctx ->
-            AdView(ctx).apply {
-                // W KMP wymuszamy bezpieczny rozmiar dla reklam
-                setAdSize(if (isLandscape) AdSize.BANNER else AdSize.FULL_BANNER)
-                adUnitId = "TU_WPISZ_SWOJ_KLUCZ_BANNERA" // Zastąp zmienną środowiskową BuildConfig
-                loadAd(AdRequest.Builder().build())
-            }
-        }
-    )
-}
 
 @OptIn(ExperimentalResourceApi::class)
 actual fun generateAndShareIntentionImage(text: String, backgroundBitmap: ImageBitmap) {

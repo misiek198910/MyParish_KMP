@@ -52,15 +52,6 @@ actual fun isLandscapeOrientation(): Boolean {
     return windowInfo.containerSize.width > windowInfo.containerSize.height
 }
 
-@Composable
-actual fun AdBannerView(modifier: Modifier) {
-
-    UIKitView(
-        factory = { UIView() },
-        modifier = modifier
-    )
-}
-
 actual fun generateAndShareIntentionImage(text: String, backgroundBitmap: ImageBitmap) {
 
     val activityItems = listOf(text)

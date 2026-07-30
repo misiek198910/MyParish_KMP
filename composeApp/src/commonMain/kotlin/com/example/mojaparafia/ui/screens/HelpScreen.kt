@@ -37,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.mojaparafia.ui.components.AdBanner
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -46,7 +45,6 @@ import org.jetbrains.compose.resources.stringResource
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun HelpScreen(
-    isPremium: Boolean,
     onBackClick: () -> Unit,
     showToast: (String) -> Unit
 ) {
@@ -71,13 +69,6 @@ fun HelpScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
-        },
-        bottomBar = {
-            if (!isPremium) {
-                Box(modifier = Modifier.fillMaxWidth().windowInsetsPadding(WindowInsets.navigationBars)) {
-                    AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = isPremium)
-                }
-            }
         },
         containerColor = Color(0xFFF5F7FA)
     ) { padding ->
@@ -119,20 +110,6 @@ fun HelpScreen(
                     onCardClick = { expandedCardId = if (expandedCardId == 6) null else 6 }
                 )
                 ExpandableHelpCard(
-                    id = 7,
-                    title = stringResource(Res.string.help_q7_title),
-                    description = stringResource(Res.string.help_q7_desc),
-                    expandedCardId = expandedCardId,
-                    onCardClick = { expandedCardId = if (expandedCardId == 7) null else 7 }
-                )
-                ExpandableHelpCard(
-                    id = 8,
-                    title = stringResource(Res.string.help_q8_title),
-                    description = stringResource(Res.string.help_q8_desc),
-                    expandedCardId = expandedCardId,
-                    onCardClick = { expandedCardId = if (expandedCardId == 8) null else 8 }
-                )
-                ExpandableHelpCard(
                     id = 9,
                     title = stringResource(Res.string.help_q9_title),
                     description = stringResource(Res.string.help_q9_desc),
@@ -145,13 +122,6 @@ fun HelpScreen(
                     description = stringResource(Res.string.help_q10_desc),
                     expandedCardId = expandedCardId,
                     onCardClick = { expandedCardId = if (expandedCardId == 10) null else 10 }
-                )
-                ExpandableHelpCard(
-                    id = 11,
-                    title = stringResource(Res.string.help_q11_title),
-                    description = stringResource(Res.string.help_q11_desc),
-                    expandedCardId = expandedCardId,
-                    onCardClick = { expandedCardId = if (expandedCardId == 11) null else 11 }
                 )
                 ExpandableHelpCard(
                     id = 12,
@@ -173,13 +143,6 @@ fun HelpScreen(
                     description = stringResource(Res.string.help_q14_desc),
                     expandedCardId = expandedCardId,
                     onCardClick = { expandedCardId = if (expandedCardId == 14) null else 14 }
-                )
-                ExpandableHelpCard(
-                    id = 15,
-                    title = stringResource(Res.string.help_q15_title),
-                    description = stringResource(Res.string.help_q15_desc),
-                    expandedCardId = expandedCardId,
-                    onCardClick = { expandedCardId = if (expandedCardId == 15) null else 15 }
                 )
                 ExpandableHelpCard(
                     id = 16,
@@ -250,7 +213,6 @@ fun HelpScreen(
                         .background(Color.White.copy(alpha = 0.2f))
                         .clickable {
                             try {
-                                // Wieloplatformowe wywołanie klienta poczty
                                 uriHandler.openUri("mailto:biuro.mojaparafia@gmail.com?subject=${emailSubject}")
                             } catch (e: Exception) {
                                 showToast(noEmailToast)

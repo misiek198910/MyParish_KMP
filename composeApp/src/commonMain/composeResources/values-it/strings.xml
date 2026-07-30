@@ -363,36 +363,40 @@
     <string name="help_flame_cd">Assistente Fiammella</string>
     <string name="help_no_email_app">Nessuna app e-mail trovata</string>
     <string name="help_email_subject">Domanda per Fiammella</string>
+
     <string name="help_q1_title">Come trovo una parrocchia sulla mappa?</string>
     <string name="help_q1_desc">Usa l&apos;icona della lente d&apos;ingrandimento nell&apos;angolo in alto a destra per digitare il nome della città o della parrocchia. Puoi anche cliccare sull&apos;icona [icon] nel pannello laterale per centrare immediatamente la mappa sulla tua posizione.</string>
+
     <string name="help_q5_title">Cosa succede se non voglio fornire la mia posizione?</string>
     <string name="help_q5_desc">La condivisione della posizione non è obbligatoria, ma senza di essa l&apos;app non mostrerà la tua posizione sulla mappa né indicherà automaticamente le Messe più vicine. La tua posizione viene utilizzata esclusivamente per la navigazione sulla mappa e non viene raccolta o utilizzata in alcun altro modo da noi.</string>
+
     <string name="help_q6_title">Come trovo la Messa più vicina?</string>
     <string name="help_q6_desc">Sotto il pulsante per la tua posizione c&apos;è l&apos;icona [icon]. Cliccandola si aprirà una scheda con i prossimi servizi e le opzioni &apos;Naviga&apos; o &apos;Ricordami&apos;.</string>
-    <string name="help_q7_title">Come imposto un promemoria per la Messa?</string>
-    <string name="help_q7_desc">Clicca sul pulsante &apos;Parrocchia più vicina&apos; e poi scegli l&apos;orario della Messa desiderata. Clicca sul pulsante &apos;Ricordami&apos; e indica quanti minuti prima della funzione dobbiamo avvisarti.</string>
-    <string name="help_q8_title">Come disattivo un promemoria impostato?</string>
-    <string name="help_q8_desc">Vai al menu laterale (icona hamburger), scegli &apos;Impostazioni&apos;, e poi &apos;Gestisci elenco&apos; nella sezione delle notifiche. Nell&apos;elenco, puoi eliminare qualsiasi promemoria cliccando sull&apos;icona del cestino.</string>
+
     <string name="help_q9_title">Come aggiungo una nuova parrocchia non presente nell&apos;elenco?</string>
     <string name="help_q9_desc">Puoi farlo in due modi: tieni premuto il dito sulla mappa nel punto in cui si trova la chiesa e seleziona &apos;Aggiungi parrocchia qui&apos;, oppure usa il pulsante &apos;+&apos; nel menu laterale e compila il modulo manualmente.</string>
+
     <string name="help_q10_title">A cosa serve il Muro delle Intenzioni?</string>
     <string name="help_q10_desc">È un luogo di preghiera comunitaria globale. Puoi chiedere supporto qui o unirti alle preghiere degli altri. Scegli tu stesso la forma della preghiera – da un breve &apos;Padre Nostro&apos; a un intero Rosario o una Novena.</string>
-    <string name="help_q11_title">Come condivido un&apos;intenzione di preghiera su Facebook?</string>
-    <string name="help_q11_desc">Apri il Muro delle Intenzioni dal menu laterale. Accanto alla tua intenzione troverai un pulsante di condivisione. Scegli lo sfondo che meglio si adatta alla tua richiesta e clicca su &apos;Condividi l&apos;immagine&apos; scegliendo l&apos;app Facebook.</string>
+
     <string name="help_q12_title">Posso aggiungere una parrocchia polacca dall&apos;estero?</string>
     <string name="help_q12_desc">Sì, assolutamente! L&apos;app La Mia Parrocchia è globale. Puoi aggiungere parrocchie cattoliche da qualsiasi angolo del mondo – da Chicago a Oslo fino a Sydney.</string>
+
     <string name="help_q13_title">Sono un parroco – come gestisco la mia parrocchia nell&apos;app?</string>
     <string name="help_q13_desc">La possibilità di aggiungere intenzioni di messa ufficiali e avvisi parrocchiali viene concordata individualmente. Ti preghiamo di contattarci all&apos;indirizzo biuro.mojaparafia@gmail.com – prepareremo un&apos;offerta di collaborazione.</string>
+
     <string name="help_q14_title">Come controllo i miei punti e cosa ricevo in cambio?</string>
     <string name="help_q14_desc">Puoi controllare i tuoi punti Ambasciatore nel menu laterale. 10 punti ti conferiscono lo stato &apos;Corona&apos; (che evidenzia le tue intenzioni), 50 punti lo stato &apos;Premium&apos; (che disattiva gli annunci), e con 200 punti puoi ricevere una maglietta gratuita da parte nostra!</string>
-    <string name="help_q15_title">Cosa faccio se vedo orari delle Messe errati?</string>
-    <string name="help_q15_desc">Se noti un errore, entra nei dettagli di quella parrocchia e clicca su &apos;Proponi una modifica&apos;. La tua segnalazione verrà inviata per la verifica e, dopo la correzione dei dati, riceverai un punto Ambasciatore da noi!</string>
+    
     <string name="help_q16_title">Come torno rapidamente alla mia parrocchia?</string>
     <string name="help_q16_desc">Nei dettagli della parrocchia, clicca sull&apos;icona [icon]. La parrocchia verrà aggiunta ai tuoi preferiti, a cui hai accesso rapido tramite il pannello laterale della mappa (icona del cuore).</string>
+
     <string name="help_q17_title">L&apos;app è a pagamento?</string>
     <string name="help_q17_desc">L&apos;utilizzo dell&apos;app La Mia Parrocchia è completamente gratuito. Gli annunci visualizzati ci aiutano a coprire i costi dei server. Se vuoi disattivarli gratuitamente, devi solo ottenere 50 punti Ambasciatore!</string>
+
     <string name="help_q18_title">A cosa serve la parrocchia di origine?</string>
     <string name="help_q18_desc">Grazie a questa, il nome della parrocchia da cui è stata inviata l&apos;intenzione appare sul Muro delle Intenzioni. Questo aiuta a costruire una comunità locale all&apos;interno del nostro spazio di preghiera globale.</string>
+
     <string name="intention_wall_toast_candle_lit">Luce accesa!</string>
     <string name="intention_wall_toast_candle_error">Errore del server. Riprova.</string>
     <string name="intention_wall_get_candles">Ottieni candele!</string>

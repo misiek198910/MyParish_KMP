@@ -2,14 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>AD_BANNER_ID</key>
-	<string>$(AD_BANNER_ID)</string>
-	<key>AD_BANNER_INLINE_ID</key>
-	<string>$(AD_BANNER_INLINE_ID)</string>
+
+
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-	<key>GADApplicationIdentifier</key>
-	<string>$(APP_ID)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

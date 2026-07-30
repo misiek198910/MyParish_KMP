@@ -18,7 +18,4 @@ expect fun navigateToMap(parishId: String, lat: Double, lon: Double)
 @Composable
 expect fun isLandscapeOrientation(): Boolean
 
-@Composable
-expect fun AdBannerView(modifier: Modifier = Modifier)
-
 expect fun generateAndShareIntentionImage(text: String, backgroundBitmap: ImageBitmap)

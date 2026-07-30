@@ -27,7 +27,6 @@ gson = "2.11.0"
 google-maps = "19.0.0"
 google-maps-compose = "6.1.2"
 google-maps-utils = "3.8.2"
-google-play-ads = "23.0.0"
 compose-icons = "1.7.3"
 play-app-update = "2.1.0"
 play-review = "2.0.1"
@@ -36,20 +35,14 @@ work = "2.9.0"
 google-services = "4.4.2"
 coil3 = "3.1.0"
 lifecycle-viewmodel = "2.8.2"
-billing = "8.3.0"
 composeLiveData = "1.6.8"
 firebase-messaging = "23.4.1"
-facebook-android-sdk = "17.0.0"
 
 [libraries]
-facebook-android-sdk = { module = "com.facebook.android:facebook-android-sdk", version.ref = "facebook-android-sdk" }
 
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
 
 compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "composeLiveData" }
-
-billing-client = { module = "com.android.billingclient:billing", version.ref = "billing" }
-billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
@@ -60,7 +53,6 @@ play-review = { group = "com.google.android.play", name = "review", version.ref 
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "play-review" }
 firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "firebase-analytics" }
 compose-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-icons" }
-play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "google-play-ads" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 settings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
@@ -113,7 +105,6 @@ androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", vers
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-# Plugin używa teraz klucza compose-plugin (1.10.3)
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

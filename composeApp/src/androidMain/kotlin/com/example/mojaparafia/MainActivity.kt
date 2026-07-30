@@ -10,7 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
-import androidx.activity.ComponentActivity // 🔥 WRACAMY DO COMPONENT ACTIVITY
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,25 +19,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
-import com.example.mojaparafia.billing.BillingManager
-import com.example.mojaparafia.billing.SubscriptionManager
 import com.example.mojaparafia.viewmodel.ParishListViewModel
-import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsConstants
-import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.ump.ConsentRequestParameters
-import com.google.android.ump.UserMessagingPlatform
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
@@ -47,11 +39,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import mivs.mojaparafia.util.ReminderManager
 import java.util.Calendar
 
-class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener {
+class MainActivity : ComponentActivity() {
 
     private val pushAction = MutableStateFlow<String?>(null)
     private val pushParishId = MutableStateFlow<String?>(null)
-    private var billingManager: BillingManager? = null
     private lateinit var viewModel: ParishListViewModel
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var appUpdateManager: AppUpdateManager
@@ -59,8 +50,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     private lateinit var prefs: SharedPreferences
     protected val analytics: FirebaseAnalytics by lazy { Firebase.analytics }
     private var pendingLocationAction: (() -> Unit)? = null
-
-    private lateinit var fbLogger: AppEventsLogger
 
     private val welcomeLocationLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
         prefs.edit { putBoolean("location_permission_shown", true) }
@@ -97,10 +86,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fbLogger = AppEventsLogger.newLogger(this)
-
         enableEdgeToEdge()
-
 
         val kmpSettings = com.russhwolf.settings.Settings()
         val themeMode = kmpSettings.getInt("app_theme", 0)
@@ -151,22 +137,14 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
 
         handleNotificationAction(intent)
 
-        billingManager = SubscriptionManager.getInstance(this).billingManager
-        billingManager?.setListener(this)
-
         setContent {
             val locationAction by viewModel.locationRequest.collectAsState()
-
-            val isPremiumAndroid by billingManager!!.isPremium.observeAsState(false)
-            LaunchedEffect(isPremiumAndroid) {
-                viewModel.updatePremiumStatus(isPremiumAndroid)
-            }
-
             val parishes by viewModel.allParishes.collectAsState(emptyList())
 
             val favoriteParishes by remember(parishes) {
                 derivedStateOf { parishes.filter { it.isFavorite } }
             }
+
             LaunchedEffect(favoriteParishes) {
                 favoriteParishes.forEach { parish ->
                     val topic = "parish_${parish.id}"
@@ -189,11 +167,11 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             val parishId by pushParishId.collectAsState()
 
             LaunchedEffect(locationAction) {
-                locationAction?.let { action ->
+                locationAction?.let { locAction ->
                     try {
                         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                             if (location != null) {
-                                viewModel.processUserLocation(location.latitude, location.longitude, action)
+                                viewModel.processUserLocation(location.latitude, location.longitude, locAction)
                             } else {
                                 Toast.makeText(this@MainActivity, "Włącz GPS, by pobrać lokalizację", Toast.LENGTH_SHORT).show()
                             }
@@ -206,13 +184,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                 }
             }
 
-            val productDetails by billingManager!!.productDetails.observeAsState(null)
-            val monthlyOffer = productDetails?.subscriptionOfferDetails?.find { it.basePlanId == BillingManager.PLAN_MONTHLY }
-            val monthlyPrice = monthlyOffer?.pricingPhases?.pricingPhaseList?.firstOrNull()?.formattedPrice
-
-            val yearlyOffer = productDetails?.subscriptionOfferDetails?.find { it.basePlanId == BillingManager.PLAN_YEARLY }
-            val yearlyPrice = yearlyOffer?.pricingPhases?.pricingPhaseList?.firstOrNull()?.formattedPrice
-
             App(
                 viewModel = viewModel,
                 pushAction = action,
@@ -221,13 +192,11 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                     pushAction.value = null
                     pushParishId.value = null
                 },
-
                 reminderScheduler = reminderManager,
                 showToast = { message ->
                     Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
                 },
                 onRequestPlatformPermissions = { runPermissionChain() },
-
                 onOpenPrivacyPolicy = {
                     val browserIntent = Intent(Intent.ACTION_VIEW, "https://misiek198910.github.io/mojaparafia-privacy/indexPL.html".toUri())
                     startActivity(browserIntent)
@@ -240,7 +209,6 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                 },
                 onRestartAppRequired = { targetLanguage ->
                     if (targetLanguage != null) {
-                        // Twardy restart procesu wyłącznie przy zmianie języka
                         val localeList = androidx.core.os.LocaleListCompat.forLanguageTags(targetLanguage)
                         androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
 
@@ -279,58 +247,13 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
                         AppCompatDelegate.setDefaultNightMode(newNightMode)
                     }
                 },
-                monthlyPriceStr = monthlyPrice,
-                yearlyPriceStr = yearlyPrice,
-                onBuyMonthlyClick = {
-                    productDetails?.let { billingManager!!.launchPurchaseFlow(this@MainActivity, it, BillingManager.PLAN_MONTHLY) }
-                },
-                onBuyYearlyClick = {
-                    productDetails?.let { billingManager!!.launchPurchaseFlow(this@MainActivity, it, BillingManager.PLAN_YEARLY) }
-                },
-                onManageSubscriptionsClick = {
-                    val url = "https://play.google.com/store/account/subscriptions?package=$packageName"
-                    startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
-                },
-                onRestorePurchasesClick = {
-                    billingManager?.queryPurchasesAsync()
-                    Toast.makeText(this@MainActivity, "Przywracanie zakupów...", Toast.LENGTH_SHORT).show()
-                },
-                isIos = false 
+                isIos = false
             )
         }
     }
 
-    override fun onPurchaseAcknowledged() {
-        runOnUiThread {
-            Toast.makeText(this, "Subskrypcja aktywowana!", Toast.LENGTH_LONG).show()
-            viewModel.fetchUserStats()
-            val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, "premium_subscription")
-            }
-
-            fbLogger.logEvent(AppEventsConstants.EVENT_NAME_SUBSCRIBE, params)
-        }
-    }
-
-    override fun onPurchaseError(error: String?) {
-        runOnUiThread {
-            Toast.makeText(this, "Błąd zakupu: $error", Toast.LENGTH_LONG).show()
-        }
-    }
     private fun runPermissionChain() {
         when {
-            !prefs.getBoolean("ad_consent_given", false) -> {
-                val consentInformation = UserMessagingPlatform.getConsentInformation(this)
-                consentInformation.requestConsentInfoUpdate(this, ConsentRequestParameters.Builder().build(), {
-                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(this) { _ ->
-                        prefs.edit { putBoolean("ad_consent_given", true) }
-                        runPermissionChain()
-                    }
-                }, {
-                    prefs.edit { putBoolean("ad_consent_given", true) }
-                    runPermissionChain()
-                })
-            }
             !prefs.getBoolean("location_permission_shown", false) -> {
                 welcomeLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             }
@@ -376,6 +299,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
             viewModel.focusMapOn(targetLat, targetLon)
         }
     }
+
     private fun handleNotificationAction(intent: Intent?) {
         intent?.extras?.let { bundle ->
             val action = bundle.getString("action") ?: bundle.get("action")?.toString()
@@ -410,6 +334,7 @@ class MainActivity : ComponentActivity(), BillingManager.BillingManagerListener 
         super.onDestroy()
         appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
+
     private fun checkForAppUpdates() { }
     fun askForAppReview() { }
     private fun scheduleNightlySync() { }

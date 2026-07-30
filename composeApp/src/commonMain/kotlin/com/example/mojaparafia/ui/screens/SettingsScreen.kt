@@ -29,8 +29,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mojaparafia.Screen
-import com.example.mojaparafia.ui.components.AdBanner
 import com.example.mojaparafia.viewmodel.ParishListViewModel
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.launch
@@ -51,26 +49,21 @@ fun SettingsScreen(
     viewModel: ParishListViewModel,
     onBackClick: () -> Unit,
     showToast: (String) -> Unit,
-    onOpenSubscriptions: () -> Unit,
     onOpenReminders: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onOpenSystemSettings: () -> Unit,
     onClearAllReminders: () -> Unit,
-    onRestartAppRequired: (String?) -> Unit,
-    isPremium: Boolean
+    onRestartAppRequired: (String?) -> Unit
 ) {
     val settings = remember { Settings() }
     val scope = rememberCoroutineScope()
 
     val isSyncing by viewModel.isSyncing.collectAsState(false)
-    val userPoints by viewModel.userPoints.collectAsState(0)
-    val effectivePremium = isPremium || userPoints >= 50
 
     var isNotificationsEnabled by remember {
         mutableStateOf(settings.getBoolean(KEY_NOTIFICATIONS_ENABLED, true))
     }
 
-    // Motyw: 0 = System, 1 = Jasny, 2 = Ciemny
     var currentTheme by remember {
         mutableStateOf(settings.getInt(KEY_APP_THEME, 0))
     }
@@ -107,13 +100,6 @@ fun SettingsScreen(
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
-            }
-        },
-        bottomBar = {
-            if (!effectivePremium) {
-                Box(modifier = Modifier.fillMaxWidth().background(Color.White.copy(alpha = 0.65f)).windowInsetsPadding(WindowInsets.navigationBars)) {
-                    AdBanner(modifier = Modifier.fillMaxWidth(), isPremium = effectivePremium)
-                }
             }
         },
         containerColor = Color(0xFFF5F7FA)
@@ -162,13 +148,6 @@ fun SettingsScreen(
                     onClick = { showThemeDialog = true }
                 )
                 SettingsDivider()
-
-                SettingsRow(
-                    icon = Icons.Filled.Star,
-                    title = stringResource(Res.string.settings_text3),
-                    summary = stringResource(Res.string.settings_text4),
-                    onClick = onOpenSubscriptions
-                )
             }
 
             // SEKCJA 2: POWIADOMIENIA
