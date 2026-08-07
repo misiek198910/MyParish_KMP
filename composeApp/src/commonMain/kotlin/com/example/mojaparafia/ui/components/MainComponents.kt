@@ -24,6 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun FabPanelOverlay(
@@ -131,7 +132,7 @@ fun MapLoadingOverlay(isMapLoaded: Boolean, onRetry: () -> Unit) {
 
     LaunchedEffect(isMapLoaded) {
         if (!isMapLoaded) {
-            delay(12000)
+            delay(12000.milliseconds)
             showRetryButton = true
         }
     }

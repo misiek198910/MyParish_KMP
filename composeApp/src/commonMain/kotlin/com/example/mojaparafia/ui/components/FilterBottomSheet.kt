@@ -1,5 +1,6 @@
 package com.example.mojaparafia.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -228,7 +229,8 @@ private fun FilterCard(title: String, content: @Composable ColumnScope.() -> Uni
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = Color.White,
-        shadowElevation = 2.dp,
+        shadowElevation = 0.dp,
+        border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f)),
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp)

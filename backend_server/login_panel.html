@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Logowanie - Moja Parafia</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-gray: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: var(--bg-gray); 
+            margin: 0; 
+            color: var(--text-main);
+        }
+
+        .login-card { 
+            background: white; 
+            padding: 50px 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 380px; 
+            border: 1px solid #e2e8f0;
+        }
+
+        .logo { 
+            width: 70px; 
+            height: auto; 
+            margin-bottom: 20px; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .brand { 
+            font-size: 12px; 
+            color: var(--primary-blue); 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            font-weight: 800; 
+            margin-bottom: 8px; 
+            display: block; 
+        }
+
+        h3 { 
+            font-size: 22px; 
+            margin: 0 0 10px 0; 
+            font-weight: 700; 
+            color: #0f172a;
+        }
+
+        p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .pin-container {
+            margin-bottom: 25px;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 16px; 
+            font-size: 28px; 
+            text-align: center; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 16px; 
+            outline: none; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            font-weight: 700;
+            color: var(--primary-blue);
+            box-sizing: border-box;
+            background: #f8fafc;
+        }
+
+        input:focus { 
+            border-color: var(--primary-blue); 
+            background: white;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+        }
+
+        input::placeholder {
+            font-size: 16px;
+            letter-spacing: normal;
+            font-weight: 400;
+            color: #cbd5e1;
+        }
+
+        button { 
+            background: var(--primary-blue); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            width: 100%; 
+            border-radius: 16px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        button:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4);
+        }
+
+        .footer-info {
+            margin-top: 35px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <img src="/static/image_church.png" class="logo" alt="Logo">
+        <span class="brand">Moja Parafia</span>
+        <h3>Panel Administracyjny</h3>
+        <p>Wprowadź 4-cyfrowy kod PIN,<br>aby zarządzać ogłoszeniami.</p>
+        
+        <form action="/panel/{{ token }}/verify" method="post">
+            <div class="pin-container">
+                <input type="password" 
+                       id="pinInput"
+                       name="pin" 
+                       maxlength="4" 
+                       pattern="[0-9]*" 
+                       inputmode="numeric" 
+                       placeholder="Wpisz PIN"
+                       required 
+                       autofocus>
+            </div>
+            <button type="submit">Zaloguj się do panelu</button>
+        </form>
+
+        <div class="footer-info">
+            System bezpiecznego zarządzania treścią parafialną
+        </div>
+    </div>
+
+    <script>
+        const pinInput = document.getElementById('pinInput');
+        pinInput.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                this.style.letterSpacing = '15px';
+            } else {
+                this.style.letterSpacing = 'normal';
+            }
+        });
+    </script>
+</body>
+</html>

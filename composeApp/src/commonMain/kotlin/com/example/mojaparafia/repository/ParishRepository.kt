@@ -2,6 +2,7 @@ package com.example.mojaparafia.repository
 
 import com.example.mojaparafia.db.DatabaseInstance
 import com.example.mojaparafia.db.ParishEntity
+import com.example.mojaparafia.db.ParishEventEntity
 import com.example.mojaparafia.network.apiService
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.flow.Flow
@@ -15,11 +16,17 @@ class ParishRepository {
 
     private var hasSyncedThisSession = false
     private val _parishes = MutableStateFlow<List<ParishEntity>>(emptyList())
-    private val parishDao = DatabaseInstance.getDatabase().parishDao()
     private val settings = Settings()
     private val LAST_SYNC_KEY = "last_sync_timestamp"
 
+    private val parishDao = DatabaseInstance.getDatabase().parishDao()
+    private val eventDao = DatabaseInstance.getDatabase().parishEventDao()
+
     val parishes: Flow<List<ParishEntity>> = parishDao.getAllParishes()
+
+    fun getEventsForParish(parishId: String): Flow<List<ParishEventEntity>> {
+        return eventDao.getEventsForParish(parishId)
+    }
 
     suspend fun syncParishes(forceFullSync: Boolean = false): Boolean {
 
@@ -75,6 +82,18 @@ class ParishRepository {
 
     suspend fun updateParish(parish: ParishEntity) {
         parishDao.update(parish)
+    }
+
+    suspend fun syncAllEvents() {
+        try {
+            val events = apiService.getEvents()
+            if (events != null) {
+                eventDao.deleteAllEvents()
+                eventDao.upsertEvents(events)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
 

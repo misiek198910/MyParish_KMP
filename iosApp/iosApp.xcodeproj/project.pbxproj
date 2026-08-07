@@ -331,6 +331,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				"OTHER_LDFLAGS[arch=*]" = "-Wl,-ld_classic";
 				PRODUCT_BUNDLE_IDENTIFIER = mivs.mojaparafia;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

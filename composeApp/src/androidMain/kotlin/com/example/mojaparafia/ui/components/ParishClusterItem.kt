@@ -11,8 +11,6 @@ class ParishClusterItem(
     val parishId: String?,
     val isCathedral: Int,
     val isFavorite: Boolean,
-    val activeIntentions: Int,
-    val activeCandles: Int,
     val isHomeParish: Boolean,
     val userHasCrown: Boolean
 ) : ClusterItem {

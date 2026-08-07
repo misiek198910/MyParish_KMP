@@ -7,7 +7,6 @@
     <string name="welcome_text1">Velkommen til Min Menighet!</string>
     <string name="welcome_text2">For å få fullt utbytte av appen, trenger vi dine tillatelser:</string>
     <string name="welcome_text3">• Stedstjenester: Nødvendig for funksjonene &apos;finn meg&apos; og &apos;finn nærmeste menighet&apos;.</string>
-    <string name="welcome_text4">• Annonsesamtykke: Lar oss vise persontilpassede annonser, noe som støtter drift og utvikling av appen. Dine data er trygge.</string>
     <string name="welcome_text5">Jeg forstår, fortsett</string>
     <string name="welcome_text6">• Varsler: Lar oss sende påminnelser om messer.</string>
     <string name="welcome_text7">• Bakgrunnsaktivitet: For at varsler skal fungere pålitelig, må appen kunne kjøre i bakgrunnen.</string>
@@ -493,10 +492,27 @@
     <string name="transport_bike">Sykkel</string>
     <string name="transport_bus">Kollektivtransport</string>
     <string name="transport_title">Velg transportmiddel</string>
-
     <string name="ios_subs_coming_soon">Abonnementsadministrasjon for iOS kommer snart.</string>
-
     <string name="dialog_btn_ok">Forstått</string>
     <string name="banner_missing_parish_title">Er ikke menigheten din på kartet? Klikk</string>
     <string name="banner_missing_parish_desc">Hold fingeren på kartet der menigheten ligger for å legge den til. Vi verifiserer hver innsending og oppdaterer med aktuelle data!</string>
+    <string name="nav_map">Kart</string>
+    <string name="nav_home_parish">Min menighet</string>
+    <string name="nav_more">Helgener</string>
+    <string name="home_parish_not_selected_title">Ingen hjemmemenighet</string>
+    <string name="home_parish_not_selected_desc">Du har ikke valgt din hjemmemenighet ennå. Du kan gjøre dette på kartet ved å klikke på husikonet ved siden av den valgte menigheten.</string>
+    <string name="home_parish_go_to_map">Gå til kartet</string>
+    <string name="placeholder_screen_text">Helgenkompendium-skjerm (under konstruksjon)</string>
+    <string name="sheet_home_active">Hjemmemenighet</string>
+    <string name="sheet_home_inactive">Sett som hjem</string>
+    <string name="sheet_fav_active">I favoritter</string>
+    <string name="sheet_fav_inactive">Lagre</string>
+    <string name="sheet_btn_details">Se alle detaljer</string>
+    <string name="details_announcement">Intensjoner og Kunngjøringer</string>
+    <string name="events_card_title">Kommende Hendelser</string>
+    <string name="events_empty_title">Ingen planlagte hendelser for øyeblikket.</string>
+    <string name="events_empty_desc">Hendelser, menighetsfester og møter i pastoralgrupper vil vises her når de legges til av menigheten.</string>
+    <string name="parish_details_blik_copy_prompt">Klikk for å kopiere telefonnummeret for BLIK</string>
+    <string name="parish_details_blik_unavailable">BLIK-støtte er ikke tilgjengelig</string>
+
 </resources>

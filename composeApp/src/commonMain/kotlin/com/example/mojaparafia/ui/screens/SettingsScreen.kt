@@ -122,7 +122,7 @@ fun SettingsScreen(
                     titleColor = if (!isSyncing) Color(0xFF4CAF50) else Color.Gray,
                     isEnabled = !isSyncing,
                     onClick = {
-                        viewModel.syncParishes()
+                        viewModel.syncParishes(forceFullSync = true)
                         scope.launch {
                             showToast(getString(Res.string.settings_refresh_start))
                         }

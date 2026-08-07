@@ -7,7 +7,6 @@
     <string name="welcome_text1">Benvenuto in La Mia Parrocchia!</string>
     <string name="welcome_text2">"Per sfruttare al meglio &apos;app, abbiamo bisogno dei tuoi permessi:"</string>
     <string name="welcome_text3">• Permesso di posizione: è necessario per le funzioni &apos;trovami&apos; e &apos;trova la parrocchia più vicina&apos;.</string>
-    <string name="welcome_text4">• Consenso per gli annunci: ci permette di mostrare annunci personalizzati, supportando così il mantenimento e lo sviluppo dell&apos;app. I tuoi dati sono al sicuro.</string>
     <string name="welcome_text5">Capisco, continua</string>
     <string name="welcome_text6">• Permesso per le notifiche: ci permette di inviare promemoria per le Messe.</string>
     <string name="welcome_text7">• Attività in background: affinché le notifiche funzionino in modo affidabile, l&apos;app deve poter essere eseguita in background.</string>
@@ -499,4 +498,23 @@
     <string name="dialog_btn_ok">Ho capito</string>
     <string name="banner_missing_parish_title">La tua parrocchia non è sulla mappa? Clicca</string>
     <string name="banner_missing_parish_desc">Tieni premuto sulla mappa il punto in cui si trova la parrocchia per aggiungerla. Verifichiamo ogni segnalazione e la completiamo con dati aggiornati!</string>
+    <string name="nav_map">Mappa</string>
+    <string name="nav_home_parish">La mia Parrocchia</string>
+    <string name="nav_more">Santi</string>
+    <string name="home_parish_not_selected_title">Nessuna parrocchia principale</string>
+    <string name="home_parish_not_selected_desc">Non hai ancora selezionato la tua parrocchia principale. Puoi farlo sulla mappa cliccando sull\'icona della casa accanto alla parrocchia selezionata.</string>
+    <string name="home_parish_go_to_map">Vai alla mappa</string>
+    <string name="placeholder_screen_text">Schermata del Compendio dei Santi (in costruzione)</string>
+    <string name="sheet_home_active">Parrocchia principale</string>
+    <string name="sheet_home_inactive">Imposta come principale</string>
+    <string name="sheet_fav_active">Nei preferiti</string>
+    <string name="sheet_fav_inactive">Salva</string>
+    <string name="sheet_btn_details">Vedi tutti i dettagli</string>
+    <string name="details_announcement">Intenzioni e Avvisi</string>
+    <string name="events_card_title">Prossimi Eventi</string>
+    <string name="events_empty_title">Nessun evento in programma al momento.</string>
+    <string name="events_empty_desc">Gli eventi, le feste patronali e gli incontri dei gruppi pastorali appariranno qui una volta aggiunti dalla parrocchia.</string>
+    <string name="parish_details_blik_copy_prompt">Clicca per copiare il numero di telefono per BLIK</string>
+    <string name="parish_details_blik_unavailable">Il supporto BLIK non è disponibile</string>
+
 </resources>

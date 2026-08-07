@@ -2,6 +2,7 @@ package com.example.mojaparafia.ui.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -53,16 +54,16 @@ fun UniversalGlassTopBar(
     val cdFiltersStr = stringResource(Res.string.main_cd_filters)
     val appNameStr = stringResource(Res.string.app_name)
 
-    // Logika nazwy ekranu
     val displayTitle = when (currentScreen) {
         "PLACEHOLDER" -> "Wszyscy Święci"
         else -> appNameStr
     }
 
     Surface(
-        color = Color.White.copy(alpha = 0.60f),
+        color = Color.White.copy(alpha = 0.90f),
         modifier = modifier.fillMaxWidth(),
-        shadowElevation = 2.dp
+        shadowElevation = 0.dp,
+        border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f))
     ) {
         Column {
             Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
@@ -71,7 +72,7 @@ fun UniversalGlassTopBar(
                 transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) },
                 label = "TopBarAnimation"
             ) { searchMode ->
-                if (searchMode && currentScreen == "MAP") { // Szukanie działa tylko na mapie (na razie)
+                if (searchMode && currentScreen == "MAP") {
                     Row(
                         modifier = Modifier.fillMaxWidth().height(barHeight).padding(horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -111,16 +112,16 @@ fun UniversalGlassTopBar(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Title always left-aligned now (zamiast szuflady menu)
+
                         Text(
                             text = displayTitle,
                             fontSize = titleSize,
                             fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily(Font(Res.font.lora_medium)),
+                            letterSpacing = (-0.5).sp,
                             color = Color(0xFF1A252F)
                         )
 
-                        // Opcje z prawej strony pojawiają się tylko w trybie mapy
+
                         if (currentScreen == "MAP") {
                             Row {
                                 IconButton(onClick = onSearchToggle) {

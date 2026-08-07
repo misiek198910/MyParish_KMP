@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 val iosPushAction = MutableStateFlow<String?>(null)
 val iosPushParishId = MutableStateFlow<String?>(null)
 
-
 fun setIosPushData(action: String?, parishId: String?) {
     iosPushAction.value = action
     iosPushParishId.value = parishId
@@ -240,7 +239,6 @@ fun MainViewController(pushManager: IosPushManager) = ComposeUIViewController {
             center.requestAuthorizationWithOptions(
                 UNAuthorizationOptionAlert or UNAuthorizationOptionSound
             ) { _, _ ->
-
                 dispatch_async(dispatch_get_main_queue()) {
                     locationManager.requestLocation()
                     iosViewModel.performInitialSyncAndFinish(
@@ -257,7 +255,6 @@ fun MainViewController(pushManager: IosPushManager) = ComposeUIViewController {
                 }
             }
         },
-
         onOpenPrivacyPolicy = {
             val url = NSURL(string = "https://misiek198910.github.io/mojaparafia-privacy/indexPL.html")
             if (url != null && UIApplication.sharedApplication.canOpenURL(url)) {
@@ -308,12 +305,6 @@ fun MainViewController(pushManager: IosPushManager) = ComposeUIViewController {
                 }
             }
         },
-        monthlyPriceStr = null,
-        yearlyPriceStr = null,
-        onBuyMonthlyClick = { },
-        onBuyYearlyClick = { },
-        onManageSubscriptionsClick = { },
-        onRestorePurchasesClick = { },
         isIos = true
     )
 }

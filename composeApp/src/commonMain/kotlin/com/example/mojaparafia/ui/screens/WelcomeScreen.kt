@@ -147,7 +147,6 @@ fun WelcomeScreen(
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 WelcomeFeatureText(stringResource(Res.string.welcome_text3))
-                WelcomeFeatureText(stringResource(Res.string.welcome_text4))
                 WelcomeFeatureText(stringResource(Res.string.welcome_text6))
                 WelcomeFeatureText(stringResource(Res.string.welcome_text7))
                 if (!isIos) {

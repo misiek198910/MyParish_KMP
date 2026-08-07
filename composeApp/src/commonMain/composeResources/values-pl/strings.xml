@@ -7,7 +7,6 @@
     <string name="welcome_text1">Witaj w Mojej Parafii!</string>
     <string name="welcome_text2">Aby w pełni korzystać z aplikacji, potrzebujemy twoich zgód:</string>
     <string name="welcome_text3">• Zgoda na lokalizację: jest niezbędna do działania funkcji &apos;znajdź mnie&apos; oraz &apos;znajdź najbliższą parafię&apos;.</string>
-    <string name="welcome_text4">• Zgoda na reklamy: pozwala nam wyświetlać spersonalizowane reklamy, co wspiera utrzymanie i rozwój aplikacji. Twoje dane są bezpieczne.</string>
     <string name="welcome_text5">Rozumiem, kontynuuj</string>
     <string name="welcome_text6">• Zgoda na powiadomienia: pozwala nam wysyłać powiadomienia o mszach.</string>
     <string name="welcome_text7">• Zgoda na działanie aplikacji w tle: Aby powiadomienia działały i były precyzyjne aplikacja musi działać w tle</string>
@@ -486,23 +485,15 @@
     <string name="settings_restart_btn_later">Później</string>
     <string name="main_banner_light_candle">Zapalmy świece pod intencjami. Rozświetlmy mapę Polski 🕯️</string>
     <string name="welcome_sync_database">Pobieranie bazy danych parafii...</string>
-
     <string name="transport_car">Samochód</string>
     <string name="transport_walk">Pieszo</string>
     <string name="transport_bike">Rower</string>
     <string name="transport_bus">Komunikacja miejska</string>
     <string name="transport_title">Wybierz środek transportu</string>
-
-    <string name="ios_subs_coming_soon">Zarządzanie subskrypcjami dla systemu iOS pojawi się wkrótce.</string>
-
+    <string name="ios_subs_coming_soon">Zarządzanie subskrypcjami dla systemu ios pojawi się wkrótce.</string>
     <string name="dialog_btn_ok">Rozumiem</string>
     <string name="banner_missing_parish_title">Nie ma Twojej parafii na mapie? Kliknij</string>
     <string name="banner_missing_parish_desc">Przytrzymaj palcem na mapie miejsce, w którym znajduje się parafia, i dodaj ją. Każde zgłoszenie weryfikujemy i uzupełniamy o aktualne dane!</string>
-
-
-
-
-
     <string name="nav_map">Mapa</string>
     <string name="nav_home_parish">Moja Parafia</string>
     <string name="nav_more">Święci</string>
@@ -510,4 +501,14 @@
     <string name="home_parish_not_selected_desc">Nie wybrałeś jeszcze swojej parafii domowej. Możesz to zrobić na mapie, klikając ikonę domku przy wybranej parafii.</string>
     <string name="home_parish_go_to_map">Przejdź do mapy</string>
     <string name="placeholder_screen_text">Ekran Kompendium Świętych (w budowie)</string>
+    <string name="sheet_home_active">Parafia domowa</string>
+    <string name="sheet_home_inactive">Ustaw domową</string>
+    <string name="sheet_fav_active">W ulubionych</string>
+    <string name="sheet_fav_inactive">Zapisz</string>
+    <string name="sheet_btn_details">Zobacz pełne szczegóły</string>
+    <string name="details_announcement">Intencje i Ogłoszenia</string>
+    <string name="events_card_title">Nadchodzące Wydarzenia</string>
+    <string name="events_empty_title">Brak zaplanowanych wydarzeń w najbliższym czasie.</string>
+    <string name="events_empty_desc">Wydarzenia, odpusty i spotkania grup duszpasterskich pojawią się tutaj po dodaniu przez parafię.</string>
+
 </resources>

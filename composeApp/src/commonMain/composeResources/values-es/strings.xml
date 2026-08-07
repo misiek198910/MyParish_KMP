@@ -7,7 +7,6 @@
     <string name="welcome_text1">¡Bienvenido a Mi Parroquia!</string>
     <string name="welcome_text2">Para aprovechar al máximo la aplicación, necesitamos tus permisos:</string>
     <string name="welcome_text3">• Permiso de ubicación: es necesario para las funciones &apos;encuéntrame&apos; y &apos;encontrar la parroquia más cercana&apos;.</string>
-    <string name="welcome_text4">• Consentimiento de anuncios: nos permite mostrar anuncios personalizados, lo que apoya el mantenimiento y desarrollo de la aplicación. Tus datos están seguros.</string>
     <string name="welcome_text5">Entiendo, continuar</string>
     <string name="welcome_text6">• Permiso de notificaciones: nos permite enviar recordatorios de misas.</string>
     <string name="welcome_text7">• Actividad en segundo plano: Para que las notificaciones funcionen de forma fiable, la aplicación debe ejecutarse en segundo plano.</string>
@@ -498,4 +497,23 @@
     <string name="dialog_btn_ok">Entendido</string>
     <string name="banner_missing_parish_title">¿Tu parroquia no está en el mapa? Haz clic</string>
     <string name="banner_missing_parish_desc">Mantén presionado en el mapa el lugar donde se encuentra la parroquia para agregarla. ¡Verificamos cada envío y lo completamos con datos actuales!</string>
+    <string name="nav_map">Mapa</string>
+    <string name="nav_home_parish">Mi Parroquia</string>
+    <string name="nav_more">Santos</string>
+    <string name="home_parish_not_selected_title">Sin parroquia principal</string>
+    <string name="home_parish_not_selected_desc">Aún no has seleccionado tu parroquia principal. Puedes hacerlo en el mapa haciendo clic en el icono de la casa junto a la parroquia seleccionada.</string>
+    <string name="home_parish_go_to_map">Ir al mapa</string>
+    <string name="placeholder_screen_text">Pantalla del Compendio de los Santos (en construcción)</string>
+    <string name="sheet_home_active">Parroquia principal</string>
+    <string name="sheet_home_inactive">Establecer como principal</string>
+    <string name="sheet_fav_active">En favoritos</string>
+    <string name="sheet_fav_inactive">Guardar</string>
+    <string name="sheet_btn_details">Ver todos los detalles</string>
+    <string name="details_announcement">Intenciones y Anuncios</string>
+    <string name="events_card_title">Próximos Eventos</string>
+    <string name="events_empty_title">No hay eventos programados en este momento.</string>
+    <string name="events_empty_desc">Los eventos, fiestas patronales y reuniones de grupos pastorales aparecerán aquí una vez añadidos por la parroquia.</string>
+    <string name="parish_details_blik_copy_prompt">Haz clic para copiar el número de teléfono para BLIK</string>
+    <string name="parish_details_blik_unavailable">El soporte de BLIK no está disponible</string>
+
 </resources>

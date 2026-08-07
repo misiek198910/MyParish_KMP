@@ -1,5 +1,6 @@
 package com.example.mojaparafia.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -114,7 +115,8 @@ fun NewsCard(news: NewsResponse) {
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f))
     ) {
         Column {
             if (!news.imageUrl.isNullOrEmpty()) {

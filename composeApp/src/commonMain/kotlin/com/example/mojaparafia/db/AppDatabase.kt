@@ -9,13 +9,14 @@ import androidx.room.ConstructedBy
 import androidx.room.RoomDatabaseConstructor
 
 @Database(
-    entities = [ParishEntity::class],
-    version = 4,
+    entities = [ParishEntity::class, ParishEventEntity::class],
+    version = 8,
     exportSchema = false
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun parishDao(): ParishDao
+    abstract fun parishEventDao(): ParishEventDao
 }
 
 fun createRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {

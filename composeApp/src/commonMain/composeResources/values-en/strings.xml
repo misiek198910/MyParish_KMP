@@ -7,7 +7,6 @@
     <string name="welcome_text1">Welcome to My Parish!</string>
     <string name="welcome_text2">To fully utilize the app, we need your consent:</string>
     <string name="welcome_text3">• Location permission: required for the &apos;find me&apos; and &apos;find nearest parish&apos; features.</string>
-    <string name="welcome_text4">• Ads consent: allows us to display personalized ads, which supports the maintenance and development of the app. Your data is secure.</string>
     <string name="welcome_text5">I understand, continue</string>
     <string name="welcome_text6">• Notifications permission: allows us to send notifications about Masses.</string>
     <string name="welcome_text7">The app must run in the background for notifications to be timely and accurate.</string>
@@ -549,4 +548,24 @@
     <string name="dialog_btn_ok">Got it</string>
     <string name="banner_missing_parish_title">Is your parish missing from the map? Click</string>
     <string name="banner_missing_parish_desc">Long-press the location on the map where the parish is located to add it. We verify every submission and update it with current data!</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_home_parish">My Parish</string>
+    <string name="nav_more">Saints</string>
+    <string name="home_parish_not_selected_title">No home parish</string>
+    <string name="home_parish_not_selected_desc">You haven\'t selected your home parish yet. You can do this on the map by clicking the house icon next to the selected parish.</string>
+    <string name="home_parish_go_to_map">Go to map</string>
+    <string name="placeholder_screen_text">Saints Compendium Screen (under construction)</string>
+    <string name="sheet_home_active">Home parish</string>
+    <string name="sheet_home_inactive">Set as home</string>
+    <string name="sheet_fav_active">In favorites</string>
+    <string name="sheet_fav_inactive">Save</string>
+    <string name="sheet_btn_details">See full details</string>
+    <string name="details_announcement">Intentions and Announcements</string>
+    <string name="events_card_title">Upcoming Events</string>
+    <string name="events_empty_title">No upcoming events scheduled at this time.</string>
+    <string name="events_empty_desc">Events, parish feasts, and pastoral group meetings will appear here once added by the parish.</string>
+    <string name="parish_details_blik_copy_prompt">Click to copy the phone number for BLIK</string>
+    <string name="parish_details_blik_unavailable">BLIK support is unavailable</string>
+
+
 </resources>

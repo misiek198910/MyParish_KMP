@@ -53,6 +53,7 @@ kotlin {
         }
 
         commonMain.dependencies {
+            implementation(compose.material)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
@@ -79,6 +80,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+
             implementation(libs.firebase.messaging.ktx)
             implementation(libs.compose.livedata)
             implementation(libs.compose.uiToolingPreview)
@@ -119,8 +121,8 @@ android {
         applicationId = "mivs.mojaparafia"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 56
-        versionName = "1.2.37"
+        versionCode = 58
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

@@ -1,5 +1,6 @@
 package com.example.mojaparafia.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,11 +43,12 @@ fun CustomBottomNavBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp) // Zapewniamy miejsce na wystający FAB
+            .height(80.dp)
     ) {
         Surface(
             color = Color.White,
-            shadowElevation = 16.dp,
+            shadowElevation = 0.dp,
+            border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f)),
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(64.dp)
         ) {
             Row(
@@ -76,7 +78,6 @@ fun CustomBottomNavBar(
             }
         }
 
-        // Duży środkowy przycisk
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

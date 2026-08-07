@@ -7,7 +7,6 @@
     <string name="welcome_text1">Bienvenue dans Ma Paroisse !</string>
     <string name="welcome_text2">Pour profiter pleinement de l&apos;application, nous avons besoin de vos autorisations :"</string>
     <string name="welcome_text3">• Autorisation de localisation : indispensable pour les fonctions &apos;trouve-moi&apos; et &apos;trouver la paroisse la plus proche&apos;.</string>
-    <string name="welcome_text4">• Consentement aux publicités : nous permet d&apos;afficher des publicités personnalisées pour soutenir le développement de l&apos;application. Vos données sont en sécurité.</string>
     <string name="welcome_text5">Je comprends, continuer</string>
     <string name="welcome_text6">• Autorisation de notification : nous permet d&apos;envoyer des rappels de messe."</string>
     <string name="welcome_text7">• Activité en arrière-plan : Pour que les notifications fonctionnent de manière fiable, l&apos;application doit s&apos;exécuter en arrière-plan.</string>
@@ -493,10 +492,27 @@
     <string name="transport_bike">Vélo</string>
     <string name="transport_bus">Transports en commun</string>
     <string name="transport_title">Choisissez le mode de transport</string>
-
     <string name="ios_subs_coming_soon">La gestion des abonnements pour iOS sera bientôt disponible.</string>
-
     <string name="dialog_btn_ok">Compris</string>
     <string name="banner_missing_parish_title">Votre paroisse n&apos;est pas sur la carte ? Cliquez</string>
     <string name="banner_missing_parish_desc">Appuyez longuement sur l&apos;emplacement de la paroisse sur la carte pour l&apos;ajouter. Nous vérifions chaque soumission et la complétons avec des données à jour !</string>
+    <string name="nav_map">Carte</string>
+    <string name="nav_home_parish">Ma Paroisse</string>
+    <string name="nav_more">Saints</string>
+    <string name="home_parish_not_selected_title">Aucune paroisse principale</string>
+    <string name="home_parish_not_selected_desc">Vous n\'avez pas encore sélectionné votre paroisse principale. Vous pouvez le faire sur la carte en cliquant sur l\'icône de la maison à côté de la paroisse sélectionnée.</string>
+    <string name="home_parish_go_to_map">Aller à la carte</string>
+    <string name="placeholder_screen_text">Écran du Compendium des Saints (en construction)</string>
+    <string name="sheet_home_active">Paroisse principale</string>
+    <string name="sheet_home_inactive">Définir comme principale</string>
+    <string name="sheet_fav_active">Dans les favoris</string>
+    <string name="sheet_fav_inactive">Enregistrer</string>
+    <string name="sheet_btn_details">Voir tous les détails</string>
+    <string name="details_announcement">Intentions et Annonces</string>
+    <string name="events_card_title">Événements à venir</string>
+    <string name="events_empty_title">Aucun événement prévu pour le moment.</string>
+    <string name="events_empty_desc">Les événements, fêtes paroissiales et réunions des groupes paroissiaux apparaîtront ici une fois ajoutés par la paroisse.</string>
+    <string name="parish_details_blik_copy_prompt">Cliquez pour copier le numéro de téléphone pour BLIK</string>
+    <string name="parish_details_blik_unavailable">Le support BLIK n\'est pas disponible</string>
+
 </resources>

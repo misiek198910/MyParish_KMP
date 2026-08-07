@@ -27,6 +27,9 @@ data class ParishEntity(
     @ColumnInfo(name = "announcements")
     val announcements: String? = null,
 
+    @ColumnInfo(name = "intentions")
+    val intentions: String? = null,
+
     @ColumnInfo(name = "confessionInfo")
     val confessionInfo: String? = null,
 
@@ -44,6 +47,9 @@ data class ParishEntity(
 
     @ColumnInfo(name = "bankAccountNumber")
     val bankAccountNumber: String? = null,
+
+    @ColumnInfo(name = "blikNumber")
+    val blikNumber: String? = null,
 
     @ColumnInfo(name = "donationInfo")
     val donationInfo: String? = null,
@@ -126,12 +132,5 @@ data class ParishEntity(
 
     @ColumnInfo(name = "firstSaturdayOfMonth_info")
     val firstSaturdayOfMonthInfo: String? = "",
-
-    @ColumnInfo(name = "active_intentions")
-    val active_intentions: Int = 0,
-
-    @SerialName("active_candles")
-    @ColumnInfo(name = "active_candles", defaultValue = "0")
-    val active_candles: Int = 0
 
 )

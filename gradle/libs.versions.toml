@@ -39,7 +39,6 @@ composeLiveData = "1.6.8"
 firebase-messaging = "23.4.1"
 
 [libraries]
-
 firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
 
 compose-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "composeLiveData" }

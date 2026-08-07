@@ -3,17 +3,9 @@ package com.example.mojaparafia.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mojaparafia.db.ParishEntity
-import com.example.mojaparafia.model.AddIntentionRequest
-import com.example.mojaparafia.model.DeleteIntentionRequest
-import com.example.mojaparafia.model.ExtinguishRequest
-import com.example.mojaparafia.model.Intention
-import com.example.mojaparafia.model.LightCandleRequest
+import com.example.mojaparafia.db.ParishEventEntity
 import com.example.mojaparafia.model.NewsResponse
-import com.example.mojaparafia.model.PinRequest
-import com.example.mojaparafia.model.PrayRequest
-import com.example.mojaparafia.model.RenewRequest
 import com.example.mojaparafia.model.SetHomeParishRequest
-import com.example.mojaparafia.model.UpdateIntentionRequest
 import com.example.mojaparafia.model.UpdateTokenRequest
 import com.example.mojaparafia.network.apiService
 import com.example.mojaparafia.repository.parishRepository
@@ -23,7 +15,6 @@ import com.russhwolf.settings.Settings
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.forms.FormDataContent
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
@@ -45,8 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 class ParishListViewModel : ViewModel() {
 
@@ -112,6 +101,10 @@ class ParishListViewModel : ViewModel() {
     private val _mapFocusRequest = MutableStateFlow<Pair<Double, Double>?>(null)
     val mapFocusRequest: StateFlow<Pair<Double, Double>?> = _mapFocusRequest.asStateFlow()
 
+    fun getParishEvents(parishId: String): Flow<List<ParishEventEntity>> {
+        return parishRepository.getEventsForParish(parishId)
+    }
+
     init {
         if (!isFirstRun.value) {
             viewModelScope.launch(Dispatchers.Default) {
@@ -136,6 +129,7 @@ class ParishListViewModel : ViewModel() {
             _isInitialSyncing.value = true
             try {
                 val success = parishRepository.syncParishes(forceFullSync = true)
+                parishRepository.syncAllEvents()
 
                 withContext(Dispatchers.Main) {
                     if (success) {
@@ -170,11 +164,12 @@ class ParishListViewModel : ViewModel() {
         }
     }
 
-    fun syncParishes() {
+    fun syncParishes(forceFullSync: Boolean = false) {
         viewModelScope.launch(Dispatchers.Default) {
             _isSyncing.value = true
             try {
-                parishRepository.syncParishes()
+                parishRepository.syncParishes(forceFullSync = forceFullSync)
+                parishRepository.syncAllEvents()
             } catch (e: Exception) {
             } finally {
                 _isSyncing.value = false

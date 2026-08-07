@@ -200,8 +200,6 @@ actual fun ParishMap(
                         parishId = parish.id,
                         isCathedral = if (parish.isCathedral) 1 else 0,
                         isFavorite = parish.isFavorite,
-                        activeIntentions = parish.active_intentions,
-                        activeCandles = parish.active_candles,
                         isHomeParish = (parish.id == homeParishId),
                         userHasCrown = userHasCrown
                     )

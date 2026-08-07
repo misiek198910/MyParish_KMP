@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// Statyczna zmienna, którą zainicjalizujemy w klasie MojaParafiaApp
 lateinit var appContext: Context
 
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {

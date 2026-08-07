@@ -115,28 +115,19 @@ actual fun ParishMap(
             buildString {
                 append("[")
                 parishesToDisplay.forEachIndexed { index, p ->
-                    val isHome = p.id.toString() == homeParishId
-                    val glyph = when {
-                        isHome && userHasCrown -> "👑"
-                        p.isCathedral -> "🕍"
-                        else -> "⛪"
-                    }
-                    val subtitle = buildString {
-                        if (p.active_intentions > 0) append("🙏 ${p.active_intentions}   ")
-                        if (p.active_candles > 0) append("🕯️ ${p.active_candles}")
-                    }.trim()
+
+                    val glyph = if (p.isCathedral) "🕍" else "⛪"
 
                     val safeTitle = (p.name ?: "").replace("\"", "\\\"").replace("\n", " ")
-                    val safeSubtitle = subtitle.replace("\"", "\\\"").replace("\n", " ")
 
                     append("{")
                     append("\"id\":\"${p.id}\",")
                     append("\"lat\":${p.latitude},")
                     append("\"lng\":${p.longitude},")
                     append("\"title\":\"$safeTitle\",")
-                    append("\"subtitle\":\"$safeSubtitle\",")
-                    append("\"hasExtras\":${p.active_candles > 0 || p.active_intentions > 0},")
-                    append("\"hasCandles\":${p.active_candles > 0},")
+                    append("\"subtitle\":\"\",")
+                    append("\"hasExtras\":false,")
+                    append("\"hasCandles\":false,")
                     append("\"glyphText\":\"$glyph\"")
                     append("}")
 

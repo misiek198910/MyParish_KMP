@@ -29,7 +29,8 @@ fun FunctionScreen(
     onHelpClick: () -> Unit,
     onSupportClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    hasNewNews: Boolean
+    hasNewNews: Boolean,
+    isIos: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -38,7 +39,6 @@ fun FunctionScreen(
             .verticalScroll(rememberScrollState())
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = 16.dp)
-            // top = 72.dp zapewnia, że karty nie chowają się pod szklanym paskiem na górze!
             .padding(top = 72.dp, bottom = 100.dp)
     ) {
         FunctionOptionCard(
@@ -59,12 +59,15 @@ fun FunctionScreen(
             showBadge = false,
             onClick = onHelpClick
         )
-        FunctionOptionCard(
-            icon = painterResource(Res.drawable.ic_coffe),
-            title = stringResource(Res.string.support_project_title),
-            showBadge = false,
-            onClick = onSupportClick
-        )
+
+        if (!isIos) {
+            FunctionOptionCard(
+                icon = painterResource(Res.drawable.ic_coffe),
+                title = stringResource(Res.string.support_project_title),
+                showBadge = false,
+                onClick = onSupportClick
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -1,6 +1,7 @@
 package com.example.mojaparafia.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,6 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.CheckCircle
@@ -22,7 +27,9 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +37,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -40,21 +45,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.mojaparafia.db.ParishEntity
+import com.example.mojaparafia.db.ParishEventEntity
 import com.example.mojaparafia.util.parseHtmlToAnnotatedString
-import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun ParishDetailScreen(
     parish: ParishEntity,
     isHomeParish: Boolean,
     isLandscape: Boolean,
     isParishActive: Boolean,
+    events: List<ParishEventEntity> = emptyList(),
+    isSyncing: Boolean = false,
+    onRefresh: () -> Unit = {},
     onProposeChangeClick: () -> Unit,
     onToggleFavorite: () -> Unit,
     onToggleHomeParish: () -> Unit,
@@ -66,6 +74,15 @@ fun ParishDetailScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isSyncing,
+        onRefresh = { onRefresh() }
+    )
+
+    // Stan zakładek
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    val tabTitles = listOf("Informacje", "Ogłoszenia", "Wydarzenia", "Intencje")
+
     if (isLandscape) {
         Row(modifier = Modifier.fillMaxSize().background(Color(0xFFF5F7FA)).navigationBarsPadding()) {
             Column(modifier = Modifier.weight(0.4f).fillMaxHeight()) {
@@ -74,31 +91,67 @@ fun ParishDetailScreen(
                 }
             }
 
-            LazyColumn(
-                modifier = Modifier.weight(0.6f).fillMaxHeight(),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+            Box(
+                modifier = Modifier
+                    .weight(0.6f)
+                    .fillMaxHeight()
+                    .pullRefresh(pullRefreshState)
             ) {
-                item { BasicInfoCard(parish, isHomeParish, onToggleFavorite, onToggleHomeParish) }
-                item { QuickActionRow(parish, onCallClick, onWebsiteClick, onEmailClick, onCopyAccountClick) }
-                item { AnnouncementsCard(parish, isParishActive, onSubmitPriestRequest) }
-                item { DonationCard(parish, onCopyAccountClick) }
-                item { LiturgicalCard(parish) }
-                item { OfficeCard(parish) }
-                item { OrganizationCard(parish) }
-                item {
-                    OutlinedButton(
-                        onClick = onProposeChangeClick,
-                        modifier = Modifier.fillMaxWidth().height(56.dp).padding(bottom = 16.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        border = BorderStroke(1.dp, Color(0xFF1976D2)),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF1976D2))
-                    ) {
-                        Icon(Icons.Filled.Edit, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(Res.string.parish_details_button_propose_change), fontWeight = FontWeight.Bold)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item { BasicInfoCard(parish, isHomeParish, onToggleFavorite, onToggleHomeParish) }
+                    item { QuickActionRow(parish, onCallClick, onWebsiteClick, onEmailClick, onCopyAccountClick) }
+
+                    item {
+                        ParishTabs(selectedTab = selectedTab, tabTitles = tabTitles, onTabSelected = { selectedTab = it })
+                    }
+
+                    item {
+                        Crossfade(targetState = selectedTab, label = "TabContent") { tab ->
+                            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                when (tab) {
+                                    0 -> { // Informacje
+                                        LiturgicalCard(parish)
+                                        OfficeCard(parish)
+                                        OrganizationCard(parish)
+                                        DonationCard(parish, onCopyAccountClick)
+
+                                        Button(
+                                            onClick = onProposeChangeClick,
+                                            modifier = Modifier.fillMaxWidth().height(64.dp).padding(top = 8.dp, bottom = 12.dp),
+                                            shape = RoundedCornerShape(32.dp),
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                                        ) {
+                                            Icon(Icons.Filled.Edit, contentDescription = null)
+                                            Spacer(Modifier.width(8.dp))
+                                            Text(stringResource(Res.string.parish_details_button_propose_change), fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                    1 -> { // Ogłoszenia
+                                        AnnouncementsCard(parish, isParishActive, onSubmitPriestRequest)
+                                    }
+                                    2 -> { // Wydarzenia
+                                        EventsCard(events)
+                                    }
+                                    3 -> { // Intencje
+                                        IntentionsCard(parish)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+
+                PullRefreshIndicator(
+                    refreshing = isSyncing,
+                    state = pullRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    contentColor = Color(0xFF1976D2),
+                    backgroundColor = Color.White
+                )
             }
         }
     } else {
@@ -116,50 +169,114 @@ fun ParishDetailScreen(
                 )
             },
         ) { innerPadding ->
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding() + 80.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pullRefresh(pullRefreshState)
             ) {
-                item { HeaderImage(photoUrl = parish.photoUrl, scrollOffset = scrollBehavior.state.collapsedFraction) }
-                item {
-                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                        BasicInfoCard(parish, isHomeParish, onToggleFavorite, onToggleHomeParish)
-                        QuickActionRow(parish, onCallClick, onWebsiteClick, onEmailClick, onCopyAccountClick)
-                        AnnouncementsCard(parish, isParishActive, onSubmitPriestRequest)
-                        DonationCard(parish, onCopyAccountClick)
-                        LiturgicalCard(parish)
-                        OfficeCard(parish)
-                        OrganizationCard(parish)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding() + 80.dp)
+                ) {
+                    item { HeaderImage(photoUrl = parish.photoUrl, scrollOffset = scrollBehavior.state.collapsedFraction) }
 
-                        OutlinedButton(
-                            onClick = onProposeChangeClick,
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 24.dp).height(56.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            border = BorderStroke(1.dp, Color(0xFF1976D2)),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF1976D2))
-                        ) {
-                            Icon(Icons.Filled.Edit, contentDescription = null)
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(Res.string.parish_details_button_propose_change), fontWeight = FontWeight.Bold)
+                    item {
+                        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            BasicInfoCard(parish, isHomeParish, onToggleFavorite, onToggleHomeParish)
+                            QuickActionRow(parish, onCallClick, onWebsiteClick, onEmailClick, onCopyAccountClick)
+
+                            ParishTabs(selectedTab = selectedTab, tabTitles = tabTitles, onTabSelected = { selectedTab = it })
+
+                            Crossfade(targetState = selectedTab, label = "TabContentPortrait") { tab ->
+                                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                    when (tab) {
+                                        0 -> { // Informacje
+                                            LiturgicalCard(parish)
+                                            OfficeCard(parish)
+                                            OrganizationCard(parish)
+                                            DonationCard(parish, onCopyAccountClick)
+
+                                            Button(
+                                                onClick = onProposeChangeClick,
+                                                modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 48.dp).height(64.dp),
+                                                shape = RoundedCornerShape(32.dp),
+                                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                                            ) {
+                                                Icon(Icons.Filled.Edit, contentDescription = null)
+                                                Spacer(Modifier.width(8.dp))
+                                                Text(stringResource(Res.string.parish_details_button_propose_change), fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                        1 -> { // Ogłoszenia
+                                            AnnouncementsCard(parish, isParishActive, onSubmitPriestRequest)
+                                        }
+                                        2 -> { // Wydarzenia
+                                            EventsCard(events)
+                                        }
+                                        3 -> { // Intencje
+                                            IntentionsCard(parish)
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
+                PullRefreshIndicator(
+                    refreshing = isSyncing,
+                    state = pullRefreshState,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = innerPadding.calculateTopPadding()),
+                    contentColor = Color(0xFF1976D2),
+                    backgroundColor = Color.White
+                )
             }
         }
     }
 }
 
-// ------------------------------------------------------------------------
-// NOWOŚĆ: Pasek szybkich akcji (Styl Google Maps / Uber)
-// ------------------------------------------------------------------------
 @Composable
-fun QuickActionRow(
-    parish: ParishEntity,
-    onCallClick: (String) -> Unit,
-    onWebsiteClick: (String) -> Unit,
-    onEmailClick: (String) -> Unit,
-    onCopyAccountClick: (String) -> Unit
-) {
+fun ParishTabs(selectedTab: Int, tabTitles: List<String>, onTabSelected: (Int) -> Unit) {
+    ScrollableTabRow(
+        selectedTabIndex = selectedTab,
+        containerColor = Color.Transparent,
+        contentColor = Color(0xFF1976D2),
+        edgePadding = 0.dp,
+        indicator = { tabPositions ->
+            if (selectedTab < tabPositions.size) {
+                TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
+                    color = Color(0xFF1976D2),
+                    height = 3.dp
+                )
+            }
+        },
+        divider = {
+            HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+        }
+    ) {
+        tabTitles.forEachIndexed { index, title ->
+            Tab(
+                selected = selectedTab == index,
+                onClick = { onTabSelected(index) },
+                text = {
+                    Text(
+                        text = title,
+                        fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                },
+                selectedContentColor = Color(0xFF1976D2),
+                unselectedContentColor = Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
+fun QuickActionRow(parish: ParishEntity, onCallClick: (String) -> Unit, onWebsiteClick: (String) -> Unit, onEmailClick: (String) -> Unit, onCopyAccountClick: (String) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -175,7 +292,6 @@ fun QuickActionRow(
             QuickActionButton(Icons.Filled.Email, "E-mail") { onEmailClick(parish.email) }
         }
         if (!parish.bankAccountNumber.isNullOrBlank()) {
-            // Można podmienić na ikonę portfela/karty, używam Star zastępczo
             QuickActionButton(Icons.Filled.Star, "Wsparcie") { onCopyAccountClick(parish.bankAccountNumber) }
         }
     }
@@ -192,7 +308,8 @@ fun QuickActionButton(icon: ImageVector, label: String, onClick: () -> Unit) {
         Surface(
             shape = CircleShape,
             color = Color.White,
-            shadowElevation = 2.dp,
+            shadowElevation = 0.dp,
+            border = BorderStroke(1.dp, Color(0xFFF0F0F0)),
             modifier = Modifier.size(56.dp)
         ) {
             Icon(
@@ -206,10 +323,6 @@ fun QuickActionButton(icon: ImageVector, label: String, onClick: () -> Unit) {
         Text(text = label, fontSize = 12.sp, color = Color(0xFF1A252F), fontWeight = FontWeight.Medium)
     }
 }
-
-// ------------------------------------------------------------------------
-// KOMPONENTY WIZUALNE
-// ------------------------------------------------------------------------
 
 @Composable
 fun HeaderImage(photoUrl: String?, scrollOffset: Float) {
@@ -248,7 +361,6 @@ fun HeaderImage(photoUrl: String?, scrollOffset: Float) {
             )
         }
 
-        // Cień na dole zdjęcia, żeby płynnie przeszło w treść
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -263,16 +375,13 @@ fun HeaderImage(photoUrl: String?, scrollOffset: Float) {
 }
 
 @Composable
-fun GlassCardDetail(
-    modifier: Modifier = Modifier,
-    containerColor: Color = Color.White.copy(alpha = 0.95f),
-    content: @Composable ColumnScope.() -> Unit
-) {
+fun GlassCardDetail(modifier: Modifier = Modifier, containerColor: Color = Color.White.copy(alpha = 0.95f), content: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp), // Bardziej okrągłe, nowoczesne rogi
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f))
     ) {
         Column(modifier = Modifier.padding(20.dp), content = content)
     }
@@ -280,10 +389,8 @@ fun GlassCardDetail(
 
 @Composable
 fun BasicInfoCard(parish: ParishEntity, isHomeParish: Boolean, onToggleFavorite: () -> Unit, onToggleHomeParish: () -> Unit) {
-    val loraMediumFont = FontFamily(Font(Res.font.lora_medium))
     val noInfo = stringResource(Res.string.parish_details_no_info)
 
-    // Nakładamy kartę nieco wyżej, na zdjęcie (efekt wchodzenia na header)
     GlassCardDetail(modifier = Modifier.offset(y = (-30).dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
             Column(modifier = Modifier.weight(1f)) {
@@ -302,7 +409,7 @@ fun BasicInfoCard(parish: ParishEntity, isHomeParish: Boolean, onToggleFavorite:
                 Text("ID: ${parish.id}", fontSize = 10.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(2.dp))
 
-                Text(parish.name ?: "", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A252F), fontFamily = loraMediumFont, lineHeight = 30.sp)
+                Text(parish.name ?: "", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A252F), lineHeight = 30.sp, letterSpacing = (-0.5).sp)
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -335,9 +442,6 @@ fun BasicInfoCard(parish: ParishEntity, isHomeParish: Boolean, onToggleFavorite:
     }
 }
 
-// ------------------------------------------------------------------------
-// ZMODERNIZOWANA KARTA OGŁOSZEŃ I INTENCJI
-// ------------------------------------------------------------------------
 @Composable
 fun AnnouncementsCard(parish: ParishEntity, isParishActive: Boolean, onSubmitPriestRequest: (String) -> Unit) {
     val placeholder = stringResource(Res.string.parish_details_no_announcements_placeholder)
@@ -349,17 +453,16 @@ fun AnnouncementsCard(parish: ParishEntity, isParishActive: Boolean, onSubmitPri
                 modifier = Modifier.size(40.dp).background(Color(0xFFFFF3E0), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text("📢", fontSize = 20.sp) // Emoji wizualnie ożywia tę sekcję
+                Text("📢", fontSize = 20.sp)
             }
             Spacer(Modifier.width(12.dp))
-            CardMainTitle("Intencje i Ogłoszenia") // Tu możesz podmienić na resource
+            CardMainTitle(stringResource(Res.string.details_announcement))
         }
 
         Spacer(Modifier.height(12.dp))
 
         if (isParishActive) {
             val textRaw = parish.announcements.takeIf { !it.isNullOrBlank() } ?: placeholder
-
             val formattedText = remember(textRaw) { parseHtmlToAnnotatedString(textRaw) }
 
             Text(
@@ -407,21 +510,47 @@ fun AnnouncementsCard(parish: ParishEntity, isParishActive: Boolean, onSubmitPri
     }
 }
 
-// ------------------------------------------------------------------------
-// ZMODERNIZOWANA KARTA DAROWIZN (PREMIUM CTA)
-// ------------------------------------------------------------------------
+@Composable
+fun IntentionsCard(parish: ParishEntity) {
+    val placeholder = "Brak intencji mszalnych na najbliższe dni."
+
+    GlassCardDetail(containerColor = Color.White) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier.size(40.dp).background(Color(0xFFF3E5F5), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("🙏", fontSize = 20.sp)
+            }
+            Spacer(Modifier.width(12.dp))
+            CardMainTitle("Intencje Mszalne")
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        val textRaw = parish.intentions.takeIf { !it.isNullOrBlank() } ?: placeholder
+        val formattedText = remember(textRaw) { parseHtmlToAnnotatedString(textRaw) }
+
+        Text(
+            text = formattedText,
+            fontSize = 15.sp,
+            color = Color(0xFF333333),
+            lineHeight = 22.sp
+        )
+    }
+}
+
 @Composable
 fun DonationCard(parish: ParishEntity, onCopyAccountClick: (String) -> Unit) {
     val noInfo = stringResource(Res.string.parish_details_no_info)
 
-    // Używamy subtelnego niebieskiego tła, by karta zachęcała do akcji
     GlassCardDetail(containerColor = Color(0xFFE3F2FD)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier.size(40.dp).background(Color(0xFFBBDEFB), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFF1976D2)) // Można zmienić na ikonę portfela/serca
+                Icon(Icons.Filled.Star, contentDescription = null, tint = Color(0xFF1976D2))
             }
             Spacer(Modifier.width(12.dp))
             Text(
@@ -433,33 +562,202 @@ fun DonationCard(parish: ParishEntity, onCopyAccountClick: (String) -> Unit) {
         }
 
         Spacer(Modifier.height(12.dp))
-        Text(parish.donationInfo.takeIf { !it.isNullOrBlank() } ?: noInfo, fontSize = 14.sp, color = Color(0xFF1A252F))
+        Text(parish.donationInfo.takeIf { !it.isNullOrBlank() } ?: noInfo,
+            fontSize = 14.sp,
+            color = Color(0xFF1A252F))
 
         Spacer(Modifier.height(12.dp))
-        val accNum = parish.bankAccountNumber
-        if (!accNum.isNullOrBlank()) {
-            Surface(
-                onClick = { onCopyAccountClick(accNum) },
-                color = Color.White,
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(1.dp, Color(0xFF90CAF9)),
-                modifier = Modifier.fillMaxWidth()
+
+        val isBankAvailable = !parish.bankAccountNumber.isNullOrBlank()
+        val bankBorderColor = if (isBankAvailable) Color(0xFF4CAF50) else Color(0xFFE53935)
+        val bankTextColor = if (isBankAvailable) Color(0xFF2E7D32) else Color(0xFFC62828)
+        val bankText = if (isBankAvailable) parish.bankAccountNumber!! else "Brak numeru konta"
+
+        Surface(
+            onClick = { if (isBankAvailable) onCopyAccountClick(parish.bankAccountNumber!!) },
+            enabled = isBankAvailable,
+            color = Color.White,
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(1.dp, bankBorderColor),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier.padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
+                    Text("💳", fontSize = 22.sp)
+                    Spacer(Modifier.width(12.dp))
                     Text(
-                        text = accNum,
+                        text = bankText,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1565C0),
+                        color = bankTextColor,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
+                        overflow = TextOverflow.Ellipsis
                     )
-                    Text("Kopiuj", fontSize = 12.sp, color = Color.Gray, fontWeight = FontWeight.Bold)
+                }
+
+                if (isBankAvailable) {
+                    Text(
+                        "Kopiuj",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        val isBlikAvailable = !parish.blikNumber.isNullOrBlank()
+        val blikBorderColor = if (isBlikAvailable) Color(0xFF4CAF50) else Color(0xFFE53935)
+        val blikTextColor = if (isBlikAvailable) Color(0xFF2E7D32) else Color(0xFFC62828)
+        val blikTextDisplay = if (isBlikAvailable) parish.blikNumber!! else "Brak numeru telefonu"
+
+        Surface(
+            onClick = { if (isBlikAvailable) onCopyAccountClick(parish.blikNumber!!) },
+            enabled = isBlikAvailable,
+            color = Color.White,
+            shape = RoundedCornerShape(12.dp),
+            border = BorderStroke(1.dp, blikBorderColor),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painter = painterResource(Res.drawable.blik_logo),
+                        contentDescription = "Logo BLIK",
+                        modifier = Modifier
+                            .height(22.dp)
+                            .widthIn(max = 50.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Text(
+                        text = blikTextDisplay,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = blikTextColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (isBlikAvailable) {
+                    Text(
+                        "Kopiuj",
+                        fontSize = 12.sp,
+                        color = Color.Gray,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+@Composable
+fun EventsCard(events: List<ParishEventEntity>) {
+    GlassCardDetail(containerColor = Color.White) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(Color(0xFFE8F5E9), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("📅", fontSize = 20.sp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            CardMainTitle(stringResource(Res.string.events_card_title))
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (events.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF8F9FA), RoundedCornerShape(12.dp))
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(Res.string.events_empty_title),
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = stringResource(Res.string.events_empty_desc),
+                    fontSize = 12.sp,
+                    color = Color.LightGray,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 16.sp
+                )
+            }
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                events.forEach { event ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF8F9FA), RoundedCornerShape(12.dp))
+                            .padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .background(Color(0xFF1976D2).copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = parseEventDate(event.eventDate),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.sp,
+                                color = Color(0xFF1976D2)
+                            )
+                            Text(
+                                text = parseEventTime(event.eventDate),
+                                fontSize = 11.sp,
+                                color = Color.DarkGray
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = event.title,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color(0xFF1A252F)
+                            )
+                            if (!event.description.isNullOrBlank()) {
+                                Text(
+                                    text = event.description,
+                                    fontSize = 12.sp,
+                                    color = Color.Gray,
+                                    lineHeight = 16.sp,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -590,6 +888,27 @@ fun WeekdayRow(day: String, hours: String) {
 
 @Composable
 fun CardMainTitle(title: String) {
-    val loraMediumFont = FontFamily(Font(Res.font.lora_medium))
-    Text(text = title, color = Color(0xFF1976D2), fontSize = 18.sp, fontWeight = FontWeight.Bold, fontFamily = loraMediumFont, letterSpacing = 1.sp)
+    Text(text = title, color = Color(0xFF1976D2), fontSize = 18.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+}
+
+private fun parseEventDate(rawDateTime: String): String {
+    return try {
+        val datePart = rawDateTime.split(" ")[0]
+        val parts = datePart.split("-")
+        val day = parts[2]
+        val monthNum = parts[1].toInt()
+        val months = listOf("STY", "LUT", "MAR", "KWI", "MAJ", "CZE", "LIP", "SIE", "WRZ", "PAŹ", "LIS", "GRU")
+        "$day ${months.getOrElse(monthNum - 1) { "" }}"
+    } catch (e: Exception) {
+        "DZIŚ"
+    }
+}
+
+private fun parseEventTime(rawDateTime: String): String {
+    return try {
+        val timePart = rawDateTime.split(" ")[1]
+        timePart.substring(0, 5)
+    } catch (e: Exception) {
+        ""
+    }
 }

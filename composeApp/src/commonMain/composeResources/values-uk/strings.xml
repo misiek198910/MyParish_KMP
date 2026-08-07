@@ -493,10 +493,27 @@
     <string name="transport_walk">Пішки</string>
     <string name="transport_bike">Велосипед</string>
     <string name="transport_bus">Громадський транспорт</string>
-
     <string name="ios_subs_coming_soon">Керування підписками для iOS з&apos;явиться незабаром.</string>
-
     <string name="dialog_btn_ok">Зрозуміло</string>
     <string name="banner_missing_parish_title">Вашої парафії немає на мапі? Натисніть</string>
     <string name="banner_missing_parish_desc">Утримуйте пальцем на мапі місце, де знаходиться парафія, щоб додати її. Ми перевіряємо кожну заявку та доповнюємо її актуальними даними!</string>
+    <string name="nav_map">Карта</string>
+    <string name="nav_home_parish">Моя Парафія</string>
+    <string name="nav_more">Святі</string>
+    <string name="home_parish_not_selected_title">Немає домашньої парафії</string>
+    <string name="home_parish_not_selected_desc">Ви ще не вибрали свою домашню парафію. Ви можете зробити це на карті, натиснувши значок будинку біля вибраної парафії.</string>
+    <string name="home_parish_go_to_map">Перейти до карти</string>
+    <string name="placeholder_screen_text">Екран Компендіуму Святих (в розробці)</string>
+    <string name="sheet_home_active">Домашня парафія</string>
+    <string name="sheet_home_inactive">Зробити домашньою</string>
+    <string name="sheet_fav_active">В улюблених</string>
+    <string name="sheet_fav_inactive">Зберегти</string>
+    <string name="sheet_btn_details">Переглянути всі деталі</string>
+    <string name="details_announcement">Інтенції та Оголошення</string>
+    <string name="events_card_title">Найближчі Події</string>
+    <string name="events_empty_title">Наразі немає запланованих подій.</string>
+    <string name="events_empty_desc">Події, парафіяльні свята та зустрічі душпастирських груп з\'являться тут після їх додавання парафією.</string>
+    <string name="parish_details_blik_copy_prompt">Натисніть, щоб скопіювати номер телефону для BLIK</string>
+    <string name="parish_details_blik_unavailable">Підтримка BLIK недоступна</string>
+
 </resources>
