@@ -305,6 +305,5 @@ fun MainViewController(pushManager: IosPushManager) = ComposeUIViewController {
                 }
             }
         },
-        isIos = true
     )
 }

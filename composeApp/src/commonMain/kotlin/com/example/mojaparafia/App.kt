@@ -48,7 +48,6 @@ fun App(
     onOpenPrivacyPolicy: () -> Unit,
     onOpenSystemSettings: () -> Unit,
     onRestartAppRequired: (String?) -> Unit,
-    isIos: Boolean = false,
     onSubmitNewParish: (Map<String, String>) -> Unit = {}
 ) {
     setSingletonImageLoaderFactory { context ->
@@ -76,7 +75,6 @@ fun App(
             WelcomeScreen(
                 isProcessing = isProcessingPermissions,
                 isSyncingData = isInitialSyncing,
-                isIos = isIos,
                 onNextStepClick = {
                     isProcessingPermissions = true
                     onRequestPlatformPermissions()
@@ -107,12 +105,10 @@ fun App(
                     onOpenSettings = {},
                     onOpenNews = { currentScreen = Screen.News },
                     onOpenHelp = { currentScreen = Screen.Help },
-                    onBuyCoffee = { uriHandler.openUri("https://buycoffee.to/mivs/MojaParafia") },
                     onOpenReminders = { currentScreen = Screen.Reminders },
                     onOpenPrivacyPolicy = onOpenPrivacyPolicy,
                     onOpenSystemSettings = onOpenSystemSettings,
-                    onRestartAppRequired = onRestartAppRequired,
-                    isIos = isIos,
+                    onRestartAppRequired = onRestartAppRequired
                 )
 
                 if (currentScreen is Screen.Reminders) {

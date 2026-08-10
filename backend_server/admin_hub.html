@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>MivS Solutions - Moja Parafia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon-blue: #00d4ff; --dark-bg: #0f172a; --card-bg: #1e293b; --neon-green: #00ff9d; --gold: #f59e0b; --pink: #f472b6; --danger: #ef4444; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: white; text-align: center; padding-top: 50px; margin: 0; }
+        
+        .stats-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+        
+        .stats-bar { 
+            background: #1e293b; padding: 15px 30px; border-radius: 15px; 
+            border: 1px solid #334155; font-size: 0.9em;
+        }
+        .stats-bar.active { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 157, 0.1); }
+        .stats-bar strong { color: var(--neon-blue); font-size: 1.2em; }
+
+        .grid { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; padding: 20px; margin-bottom: 20px; }
+        
+        .card { 
+            background: #1e293b; border: 2px solid #334155; padding: 40px; border-radius: 25px; 
+            width: 280px; text-decoration: none; color: white; transition: 0.3s; 
+            position: relative; display: flex; flex-direction: column; align-items: center;
+        }
+        .card:hover { transform: translateY(-10px); border-color: var(--neon-blue); box-shadow: 0 20px 40px rgba(0,212,255,0.2); }
+        .card h2 { margin: 15px 0 10px; font-size: 1.5em; }
+        .card p { color: #94a3b8; font-size: 0.9em; margin: 0; }
+        .icon { font-size: 50px; }
+        
+        .badge { 
+            position: absolute; top: -10px; right: -10px; background: var(--danger); color: white; 
+            padding: 5px 12px; border-radius: 50px; font-weight: 800; font-size: 0.8em;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5); animation: pulse 2s infinite;
+        }
+
+        .dashboard-footer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 25px;
+            max-width: 1600px; 
+            margin: 0 auto 50px;
+            padding: 0 20px;
+            align-items: stretch;
+        }
+
+        .recent-activity { 
+            background: #1e293b; 
+            border-radius: 20px; 
+            padding: 25px; 
+            text-align: left; 
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .activity-list::-webkit-scrollbar { width: 6px; }
+        .activity-list::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
+        .recent-activity h3 { margin-top: 0; color: var(--gold); text-transform: uppercase; font-size: 0.75em; letter-spacing: 2px; margin-bottom: 20px; }
+        
+        .activity-item { 
+            display: flex; justify-content: space-between; align-items: center; padding: 12px 0; 
+            border-bottom: 1px solid #334155; font-size: 0.85em; 
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item .name { font-weight: 600; color: var(--neon-blue); }
+        .activity-item .date { color: #64748b; font-family: monospace; }
+        .activity-item .email-sub { color: #94a3b8; font-size: 0.9em; display: block; }
+
+        .fav-rank { color: var(--pink); font-weight: 800; margin-right: 10px; }
+        .fav-count { background: rgba(0, 212, 255, 0.2); color: var(--neon-blue); padding: 2px 8px; border-radius: 5px; font-weight: bold; margin-right: 10px; }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1); color: var(--danger);
+            border: 1px solid var(--danger); padding: 5px 10px;
+            border-radius: 8px; cursor: pointer; font-size: 0.7em; font-weight: 800; transition: 0.2s;
+        }
+        .delete-btn:hover { background: var(--danger); color: white; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        @media (max-width: 1400px) {
+            .dashboard-footer { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 900px) {
+            .dashboard-footer { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>MivS Solutions - Moja Parafia</h1>
+    
+    <div class="stats-container">
+        <div class="stats-bar">
+            🚀 Pobrania danych: <strong>{{ downloads }}</strong>
+        </div>
+        <!-- NOWY LICZNIK ODWIEDZIN WWW -->
+        <div class="stats-bar" style="border-color: var(--pink);">
+            🌐 Odwiedziny strony: <strong>{{ html_visitors }}</strong>
+        </div>
+        <div class="stats-bar active">
+            💰 Aktywne subskrypcje: <strong id="top-active-counter">{{ active_subscriptions }}</strong>
+        </div>
+        <div class="stats-bar">
+            ❤️ Obserwowane parafie: <strong id="top-fav-counter">{{ total_favorites_count }}</strong>
+        </div>
+    </div>
+
+    <div class="grid">
+        <a href="/mivs-admin/{{token}}/{{pin}}/subscriptions" class="card">
+            <div class="icon">💳</div>
+            <h2>Subskrypcje</h2>
+            <p>Przedłużanie ważności i statusy parafii.</p>
+        </a>
+
+        <a href="/mivs-admin/{{token}}/{{pin}}/proposals" class="card">
+            {% if pending != 0 %}
+                <div class="badge">{{ pending }} NOWE</div>
+            {% endif %}
+            <div class="icon">📝</div>
+            <h2>Zgłoszenia</h2>
+            <p>Zmiany w danych oraz wnioski o nowe parafie.</p>
+        </a>
+      
+        <a href="/mivs-admin/{{token}}/{{pin}}/parishes_manage" class="card">
+            <div class="icon">🏘️</div>
+            <h2>Baza Parafii</h2>
+            <p>Pełna edycja danych, lokalizacji i dostępów.</p>
+        </a>
+
+        <!-- NOWA KARTA: Ściana Intencji -->
+        <a href="/mivs-admin/{{token}}/{{pin}}/intentions" class="card">
+            <div class="icon">🙏</div>
+            <h2>Ściana Intencji</h2>
+            <p>Zarządzanie wpisami, moderacja i zatwierdzanie intencji.</p>
+        </a>
+    </div>
+
+    <div class="dashboard-footer">
+        <div class="recent-activity">
+            <h3>Ostatnie aktualizacje bazy</h3>
+            <div class="activity-list">
+                {% for change in last_changes %}
+                <div class="activity-item">
+                    <span class="name">{{ change.name }} (#{{ change.id }})</span>
+                    <span class="date">{{ change.last_update.split(' ')[0] }}</span>
+                </div>
+                {% endfor %}
+                {% if not last_changes %}
+                <p style="color: #64748b; font-size: 0.8em;">Brak zmian.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="ranking" class="recent-activity">
+            <h3>❤️ Ulubione Parafie</h3>
+            <div id="favorites-stats-body" class="activity-list">
+                <p style="color: #64748b; font-size: 0.8em;">Ładowanie statystyk...</p>
+            </div>
+        </div>
+
+        <div class="recent-activity" style="border-color: rgba(0, 255, 157, 0.2);">
+            <h3 style="color: var(--neon-green);">💰 Aktywne Subskrypcje</h3>
+            <div id="active-subs-list" class="activity-list">
+                <p style="color: #64748b; font-size: 0.8em;">Ładowanie danych...</p>
+            </div>
+        </div>
+
+        <div class="recent-activity" style="border-color: var(--gold);">
+            <h3 style="color: var(--gold);">🤝 Chętni na współpracę</h3>
+            <div id="collaboration-leads-body" class="activity-list">
+                <p style="color: #64748b; font-size: 0.8em;">Ładowanie zgłoszeń...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = "{{ token }}";
+
+        async function loadFavoriteStats() {
+            try {
+                const response = await fetch(`/api/admin/favorites-summary?token=${token}`);
+                const data = await response.json();
+                const container = document.getElementById('favorites-stats-body');
+                const topCounter = document.getElementById('top-fav-counter');
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="color: #64748b; font-size: 0.8em;">Brak danych.</p>';
+                    if(topCounter) topCounter.innerText = "0";
+                    return;
+                }
+
+                container.innerHTML = '';
+                data.forEach((item, index) => {
+                    const row = `
+                        <div class="activity-item">
+                            <span>
+                                <span class="fav-rank">${index + 1}</span>
+                                <span class="name">
+                                    ${item.name} 
+                                    <small style="color: #64748b; font-size: 0.8em; margin-left: 5px;">(#${item.id})</small>
+                                </span>
+                            </span>
+                            <div style="display: flex; align-items: center;">
+                                <span class="fav-count">${item.total_count}</span>
+                                <button class="delete-btn" onclick="deleteParishLogs('${item.id}')">X</button>
+                            </div>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', row);
+                });
+                
+                if(topCounter) topCounter.innerText = data.length;
+
+            } catch (error) {
+                console.error("Błąd ładowania rankingu:", error);
+                document.getElementById('favorites-stats-body').innerHTML = '<p style="color: #ef4444;">Błąd API.</p>';
+            }
+        }
+
+        async function loadActiveSubs() {
+            try {
+                const response = await fetch(`/api/admin/active-subscriptions-list?token=${token}`); 
+                const data = await response.json();
+                const container = document.getElementById('active-subs-list');
+                const topActiveCounter = document.getElementById('top-active-counter');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="color: #64748b; font-size: 0.8em;">Brak aktywnych czasowo parafii.</p>';
+                    if(topActiveCounter) topActiveCounter.innerText = "0";
+                    return;
+                }
+
+                container.innerHTML = '';
+                data.forEach(p => {
+                    const item = `
+                        <div class="activity-item">
+                            <span class="name" style="color: var(--neon-green);">
+                                ${p.name} 
+                                <small style="color: #64748b; font-size: 0.8em; margin-left: 5px;">(#${p.id})</small>
+                            </span>
+                            <span class="date" style="color: white; font-size: 0.9em;">
+                                ${p.subscription_expires}
+                            </span>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', item);
+                });
+                
+                if(topActiveCounter) topActiveCounter.innerText = data.length;
+
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('active-subs-list').innerHTML = '<p style="color: #ef4444; font-size: 0.7em;">Błąd połączenia.</p>';
+            }
+        }
+
+        async function loadCollaborationLeads() {
+            try {
+                const response = await fetch(`/api/admin/collaboration-leads?token=${token}`);
+                const data = await response.json();
+                const container = document.getElementById('collaboration-leads-body');
+                
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="color: #64748b; font-size: 0.8em;">Brak nowych zgłoszeń.</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                data.forEach(item => {
+                    const row = `
+                        <div class="activity-item">
+                            <span>
+                                <span class="name">${item.parish_name || 'Nieznana Parafia'} <small style="color:#64748b">(#${item.parish_id})</small></span>
+                                <span class="email-sub">📧 ${item.email}</span>
+                            </span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="date">${item.created_at}</span>
+                                <button class="delete-btn" onclick="deleteLead(${item.id})">X</button>
+                            </div>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', row);
+                });
+            } catch (error) { 
+                console.error("Błąd ładowania zgłoszeń współpracy:", error); 
+                document.getElementById('collaboration-leads-body').innerHTML = '<p style="color: #ef4444;">Błąd API.</p>';
+            }
+        }
+
+        async function deleteParishLogs(parishId) {
+            if (!confirm(`Wyczyścić historię dla #${parishId}?`)) return;
+            await fetch(`/api/admin/delete-favorite-logs?token=${token}&parish_id=${parishId}`, { method: 'DELETE' });
+            loadFavoriteStats();
+        }
+
+        async function deleteLead(id) {
+            if (!confirm(`Czy na pewno usunąć zgłoszenie #${id}?`)) return;
+            await fetch(`/api/admin/delete-collaboration-lead?token=${token}&lead_id=${id}`, { method: 'DELETE' });
+            loadCollaborationLeads();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFavoriteStats();
+            loadActiveSubs();
+            loadCollaborationLeads();
+        });
+        
+        setInterval(() => {
+            loadFavoriteStats();
+            loadActiveSubs();
+            loadCollaborationLeads();
+        }, 60000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MivS-Security - Autoryzacja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at center, #1e293b, #0f172a);
+            color: var(--text-main);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+        }
+
+        .shield-icon {
+            font-size: 50px;
+            color: var(--neon-blue);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        h2 {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .pin-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            /* Zmniejszamy letter-spacing dla placeholdera, przywrócimy dla wpisywania w JS */
+            letter-spacing: normal; 
+            outline: none;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Stylizacja placeholdera, żeby był bardzo subtelny */
+        .pin-input::placeholder {
+            letter-spacing: normal;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+        }
+
+        .pin-input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            letter-spacing: 10px; /* Przywracamy szeroki rozstaw przy wpisywaniu */
+        }
+
+        .btn-unlock {
+            width: 100%;
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-unlock:hover {
+            box-shadow: 0 0 25px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+
+        .status-msg {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="shield-icon">🛡️</div>
+    <h2>MivS-SuperAdmin</h2>
+    <input type="password" id="pinInput" class="pin-input" placeholder="Wprowadź PIN" maxlength="4" autofocus autocomplete="off">
+    <button class="btn-unlock" onclick="verifyAccess()">Autoryzuj Dostęp</button>
+    <div class="status-msg" id="statusMsg">PROTOKÓŁ BEZPIECZEŃSTWA AKTYWNY</div>
+</div>
+
+<script>
+    const token = "{{ token }}";
+    const input = document.getElementById('pinInput');
+
+    // Dynamiczna zmiana letter-spacing po zaczeciu pisania
+    input.addEventListener('input', function() {
+        this.style.letterSpacing = this.value.length > 0 ? "10px" : "normal";
+    });
+
+    function verifyAccess() {
+        const pin = input.value;
+        const msg = document.getElementById('statusMsg');
+
+        if(pin.length === 4) {
+            msg.innerHTML = "WERYFIKACJA POŁĄCZENIA...";
+            msg.style.color = "#00d4ff";
+            // Przekierowanie - serwer (Python) zdecyduje, czy PIN w URL jest poprawny
+            window.location.href = `/mivs-admin/${token}/${pin}`;
+        } else {
+            msg.innerHTML = "WPROWADŹ 4-CYFROWY PIN";
+            msg.style.color = "#ff4757";
+            input.style.letterSpacing = "normal";
+        }
+    }
+
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') verifyAccess();
+    });
+</script>
+
+</body>
+</html>

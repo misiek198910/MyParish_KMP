@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Zarządzanie Bazą Parafii - MivS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon-blue: #00d4ff; --dark-bg: #0f172a; --card-bg: #1e293b; --neon-green: #00ff9d; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: white; padding: 40px; text-align: center; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .back { color: #64748b; text-decoration: none; display: inline-block; margin-bottom: 25px; transition: 0.2s; font-weight: 600; }
+        .back:hover { color: var(--neon-blue); }
+        .header-actions { display: flex; gap: 15px; justify-content: center; align-items: center; margin-bottom: 40px; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 300px; background: var(--card-bg); padding: 15px 25px; border-radius: 20px; border: 1px solid var(--neon-blue); display: flex; align-items: center; box-shadow: 0 0 20px rgba(0, 212, 255, 0.1); }
+        .search-box input { background: transparent; border: none; color: white; font-size: 1.1em; outline: none; width: 100%; }
+        .btn { background: var(--neon-blue); color: #0f172a; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 800; cursor: pointer; text-decoration: none; transition: 0.3s; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; display: inline-block; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3); }
+        .btn-create { background: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 157, 0.2); }
+        .result-card { background: var(--card-bg); padding: 25px; border-radius: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; transition: 0.3s; }
+        .result-card:hover { border-color: var(--neon-blue); background: #243147; }
+        .parish-info { text-align: left; }
+        .parish-info strong { color: var(--neon-blue); font-size: 1.1em; }
+        .parish-info small { color: #94a3b8; display: block; margin-top: 5px; font-family: monospace; }
+        .no-results { color: #64748b; margin-top: 50px; font-style: italic; }
+        .loading-overlay { display: none; margin-top: 20px; color: var(--neon-blue); font-weight: 800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/mivs-admin/{{token}}/{{pin}}" class="back">← Wróć do Centrum Zarządzania</a>
+        <h1>Zarządzanie Bazą Parafii</h1>
+        
+        <div class="header-actions">
+            <div class="search-box">
+                <form method="get" action="/mivs-admin/{{token}}/{{pin}}/parishes_manage" id="searchForm" style="width: 100%; display: flex; gap: 10px;">
+                    <input type="text" name="q" placeholder="Szukaj po ID, nazwie lub diecezji..." value="{{ query }}" autofocus>
+                    <button type="submit" class="btn" id="searchBtn">SZUKAJ</button>
+                </form>
+            </div>
+            <a href="/mivs-admin/{{token}}/{{pin}}/parishes_manage/edit/new" class="btn btn-create">+ Dodaj Nową</a>
+        </div>
+
+        <div id="results">
+            {% for p in parishes %}
+            <div class="result-card" id="row-{{ p.id }}">
+                <div class="parish-info">
+                    <strong>ID: {{ p.id }}</strong> — <span>{{ p.name }}</span>
+                    <small>{{ p.diocese or 'Brak diecezji' }} | Token: {{ p.access_token }}</small>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/mivs-admin/{{token}}/{{pin}}/parishes_manage/edit/{{ p.id }}" class="btn">EDYTUJ</a>
+                    <button class="btn" style="background: #ef4444; color: white;" onclick="deleteFromDatabase('{{ p.id }}')">USUŃ</button>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not parishes and query %}
+                <div class="no-results">
+                    <p>Brak wyników dla frazy: "<strong>{{ query }}</strong>"</p>
+                    <a href="/mivs-admin/{{token}}/{{pin}}/parishes_manage" style="color: var(--neon-blue); text-decoration: none;">Pokaż wszystkie</a>
+                </div>
+            {% elif not parishes and not query %}
+                <p class="no-results">Wyszukaj parafię, aby nią zarządzać.</p>
+            {% endif %}
+        </div>
+        
+        <div class="loading-overlay" id="loader">Przeszukiwanie bazy...</div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function() {
+            document.getElementById('searchBtn').innerText = "...";
+            document.getElementById('searchBtn').disabled = true;
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('results').style.opacity = '0.3';
+        });
+
+        async function deleteFromDatabase(parishId) {
+            if(!confirm("⚠️ UWAGA: To usunie parafię TRWALE z bazy danych! Kontynuować?")) return;
+
+            try {
+                // Wysyłamy żądanie do nowego endpointu w API
+                const response = await fetch(`/mivs-admin/{{token}}/{{pin}}/parishes_manage/delete/${parishId}`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                if(result.status === "success") {
+                    alert("Parafia została trwale usunięta.");
+                    location.reload(); 
+                } else {
+                    alert("Błąd: " + (result.message || "Nie udało się usunąć rekordu."));
+                }
+            } catch (e) {
+                alert("Błąd połączenia z serwerem.");
+            }
+        }
+    </script>
+</body>
+</html>

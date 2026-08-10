@@ -29,7 +29,6 @@ import myparish.composeapp.generated.resources.*
 fun WelcomeScreen(
     isProcessing: Boolean,
     isSyncingData: Boolean,
-    isIos: Boolean,
     onNextStepClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -149,9 +148,6 @@ fun WelcomeScreen(
                 WelcomeFeatureText(stringResource(Res.string.welcome_text3))
                 WelcomeFeatureText(stringResource(Res.string.welcome_text6))
                 WelcomeFeatureText(stringResource(Res.string.welcome_text7))
-                if (!isIos) {
-                    WelcomeFeatureText(stringResource(Res.string.welcome_welcome_text_3))
-                }
             }
 
             Spacer(modifier = Modifier.height(32.dp))

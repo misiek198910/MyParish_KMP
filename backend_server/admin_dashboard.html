@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Sterowania MivS-SuperAdmin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --neon-green: #00ff9d;
+            --neon-red: #ff4757;
+            --text-main: #f8fafc;
+            --glass-border: rgba(0, 212, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            background-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Pasek górny z przyciskiem wyloguj */
+        .top-nav {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .btn-logout {
+            background: rgba(255, 71, 87, 0.1);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-logout:hover {
+            background: var(--neon-red);
+            color: white;
+            box-shadow: 0 0 15px var(--neon-red);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            margin-bottom: 40px;
+        }
+
+        .search-form {
+            display: flex;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            outline: none;
+            color: white;
+        }
+
+        .btn-search {
+            background: var(--neon-blue);
+            color: var(--dark-bg);
+            border: none;
+            padding: 0 40px;
+            border-radius: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-search:hover {
+            box-shadow: 0 0 25px var(--neon-blue);
+            transform: scale(1.03);
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        
+        th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+        }
+
+        td { 
+            padding: 30px 20px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+        }
+
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .id-badge {
+            font-family: 'Inter', monospace;
+            color: var(--neon-blue);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+        }
+
+        .expiry-date { font-weight: 700; color: var(--neon-green); text-shadow: 0 0 10px rgba(0, 255, 157, 0.4); }
+        .expired { color: var(--neon-red); text-shadow: 0 0 10px rgba(255, 71, 87, 0.4); }
+
+        .action-container {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .btn-extend, .btn-disable {
+            flex: 1;
+            min-width: 110px;
+            background: transparent;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .btn-extend {
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .btn-extend:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .btn-disable {
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .btn-disable:hover {
+            background: var(--neon-red);
+            color: white;
+            box-shadow: 0 0 20px var(--neon-red);
+        }
+
+        .no-results { text-align: center; padding: 80px; color: #64748b; font-size: 18px; }
+
+        .stats-subtext {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <button class="btn-logout" onclick="logoutSession()">🔴 Wyloguj sesję</button>
+</div>
+
+<div class="container">
+    <h1>Panel Sterowania MivS-SuperAdmin</h1>
+
+    <form action="" method="get" class="search-form">
+        <input type="number" name="search_id" placeholder="WPROWADŹ NODE ID (NP. 101)" value="{{ last_search }}" required autofocus>
+        <button type="submit" class="btn-search">AUTORYZUJ ➔</button>
+    </form>
+
+    <div class="result-card">
+        {% if parishes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID SYSTEMOWE</th>
+                    <th>TOŻSAMOŚĆ / LOGI POWIĄZANE</th>
+                    <th>STATUS WAŻNOŚCI</th>
+                    <th>AKCJE TERMINALA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in parishes %}
+                <tr>
+                    <td><span class="id-badge">ID_{{ p.id }}</span></td>
+                    <td>
+                        <div style="font-size: 18px; font-weight: 600; color: white;">{{ p.name }}</div>
+                        <div class="stats-subtext">
+                            Pierwsza Synch.: {{ p.first_subscription_date }} | Ostatni Uplink: {{ p.last_subscription_date }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="expiry-date {% if p.subscription_expires == 'Brak subskrypcji' %}expired{% endif %}">
+                            {{ p.subscription_expires }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-container">
+                            <button class="btn-extend" onclick="extendSubscription('{{ p.id }}')">+30 DNI</button>
+                            <button class="btn-disable" onclick="disableSubscription('{{ p.id }}')">WYŁĄCZ</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="no-results">
+                <p>Oczekiwanie na identyfikator węzła... Wprowadź ID, aby nawiązać bezpieczne połączenie.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Funkcja wylogowania - powrót do ekranu logowania bez PINu
+function logoutSession() {
+    if(!confirm("ZAKOŃCZYĆ SESJĘ? Połączenie z terminalem zostanie przerwane.")) return;
+    const token = "{{ token }}";
+    window.location.href = `/mivs-admin/${token}`;
+}
+
+async function extendSubscription(parishId) {
+    if(!confirm("ZATWIERDZIĆ PRZEDŁUŻENIE CYKLU O 30 DNI?")) return;
+    const token = "{{ token }}"; const pin = "{{ pin }}";
+    try {
+        const response = await fetch(`/mivs-admin/${token}/${pin}/extend/${parishId}`, { method: 'POST' });
+        const result = await response.json();
+        if (result.status === "success") location.reload();
+    } catch (e) { alert("BŁĄD POŁĄCZENIA / LINK ERROR"); }
+}
+
+async function disableSubscription(parishId) {
+    if(!confirm("⚠️ TERMINACJA SUBSKRYPCJI? Akcja wymaga ponownej autoryzacji duszpasterza.")) return;
+    const token = "{{ token }}"; const pin = "{{ pin }}";
+    try {
+        const response = await fetch(`/mivs-admin/${token}/${pin}/disable/${parishId}`, { method: 'POST' });
+        const result = await response.json();
+        if (result.status === "success") location.reload();
+    } catch (e) { alert("BŁĄD TERMINALA / LINK ERROR"); }
+}
+</script>
+</body>
+</html>

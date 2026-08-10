@@ -7,15 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,10 +38,6 @@ import myparish.composeapp.generated.resources.home_parish_go_to_map
 import myparish.composeapp.generated.resources.home_parish_not_selected_desc
 import myparish.composeapp.generated.resources.home_parish_not_selected_title
 import myparish.composeapp.generated.resources.settings_cancel_all_success
-import myparish.composeapp.generated.resources.support_project_btn_coffee
-import myparish.composeapp.generated.resources.support_project_btn_later
-import myparish.composeapp.generated.resources.support_project_desc
-import myparish.composeapp.generated.resources.support_project_title
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -57,7 +50,6 @@ fun MainScreen(
     onPushHandled: () -> Unit = {},
     showToast: (String) -> Unit,
     isLandscape: Boolean,
-    isIos: Boolean,
     onNavigateToAddParish: (Double, Double) -> Unit,
     onNavigateToDetails: (String) -> Unit,
     onProposeChangeClick: (String, String) -> Unit = { _, _ -> },
@@ -69,7 +61,6 @@ fun MainScreen(
     onOpenSettings: () -> Unit,
     onOpenNews: () -> Unit,
     onOpenHelp: () -> Unit,
-    onBuyCoffee: () -> Unit,
     onOpenReminders: () -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onOpenSystemSettings: () -> Unit,
@@ -114,25 +105,6 @@ fun MainScreen(
             currentScreen = "DETAILS"
             onPushHandled()
         }
-    }
-
-    if (showSupportDialog) {
-        AlertDialog(
-            onDismissRequest = { showSupportDialog = false },
-            title = { Text(stringResource(Res.string.support_project_title), fontWeight = FontWeight.Bold, color = Color(0xFF1A252F)) },
-            text = { Text(stringResource(Res.string.support_project_desc)) },
-            confirmButton = {
-                Button(
-                    onClick = { showSupportDialog = false; onBuyCoffee() },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
-                ) { Text(stringResource(Res.string.support_project_btn_coffee)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showSupportDialog = false }) { Text(stringResource(Res.string.support_project_btn_later), color = Color.Gray) }
-            },
-            containerColor = Color.White,
-            shape = RoundedCornerShape(24.dp)
-        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -226,8 +198,7 @@ fun MainScreen(
                         onHelpClick = onOpenHelp,
                         onSupportClick = { showSupportDialog = true },
                         onSettingsClick = { currentScreen = "SETTINGS" },
-                        hasNewNews = hasNewNews,
-                        isIos = isIos
+                        hasNewNews = hasNewNews
                     )
                 }
                 "SETTINGS" -> {

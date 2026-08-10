@@ -2,12 +2,9 @@ package com.example.mojaparafia.network
 
 import com.example.mojaparafia.db.ParishEntity
 import com.example.mojaparafia.db.ParishEventEntity
-import com.example.mojaparafia.model.AdminConfig
-import com.example.mojaparafia.model.IpLocationResponse
 import com.example.mojaparafia.model.NewsResponse
 import com.example.mojaparafia.model.SetHomeParishRequest
 import com.example.mojaparafia.model.UpdateTokenRequest
-import com.example.mojaparafia.model.UserStatsResponse
 import io.ktor.client.call.body
 import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.forms.submitForm
@@ -57,16 +54,6 @@ class ParishApiService {
         }
     }
 
-    suspend fun getUserStats(deviceId: String): UserStatsResponse? {
-        return try {
-            networkClient.get("$baseUrl/user/stats") {
-                parameter("device_id", deviceId)
-            }.body()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     suspend fun setHomeParish(request: SetHomeParishRequest): Boolean {
         return try {
             networkClient.post("$baseUrl/user/set-home-parish") {
@@ -86,14 +73,6 @@ class ParishApiService {
         }
     }
 
-    suspend fun getIpLocation(): IpLocationResponse? {
-        return try {
-            networkClient.get("$baseUrl/api/locate-me").body()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     suspend fun updateFcmToken(request: UpdateTokenRequest): Boolean {
         return try {
             networkClient.post("$baseUrl/user/update-token") {
@@ -104,26 +83,6 @@ class ParishApiService {
             false
         }
     }
-
-    suspend fun getAdminConfig(): AdminConfig? {
-        return try {
-            networkClient.get("$baseUrl/api/admin/config").body()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    suspend fun updateAdminFcmToken(deviceId: String, token: String): Boolean {
-        return try {
-            networkClient.post("$baseUrl/api/admin/update-credentials") {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("device_id" to deviceId, "fcm_token" to token))
-            }.status.isSuccess()
-        } catch (e: Exception) {
-            false
-        }
-    }
-
 
     suspend fun getEvents(
         parishId: String? = null,

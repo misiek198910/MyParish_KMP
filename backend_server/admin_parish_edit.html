@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>MivS Solution Super Admin - Editor #{{ p.id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --neon-blue: #00d4ff; --dark-bg: #0f172a; --card-bg: #1e293b; --neon-green: #00ff9d; --gold: #f59e0b; }
+        body { font-family: 'Inter', sans-serif; background: var(--dark-bg); color: white; padding: 20px; margin: 0; }
+        .container { max-width: 1400px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 25px; border: 1px solid rgba(0,212,255,0.2); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        h2 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid var(--neon-blue); padding-bottom: 10px; margin-top: 0; }
+        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: left; }
+        .section-header { grid-column: span 4; background: rgba(0,212,255,0.1); padding: 12px 20px; border-radius: 10px; color: var(--neon-blue); font-weight: 800; margin-top: 25px; font-size: 0.85em; text-transform: uppercase; border-left: 4px solid var(--neon-blue); }
+        .field-group { display: flex; flex-direction: column; }
+        .field-group.col-2 { grid-column: span 2; }
+        .field-group.col-3 { grid-column: span 3; }
+        .field-group.col-4 { grid-column: span 4; }
+        label { font-size: 0.7em; color: #94a3b8; margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
+        input, textarea, select { background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; font-size: 0.85em; outline: none; transition: 0.3s; width: 100%; box-sizing: border-box; }
+        input:focus, textarea:focus { border-color: var(--neon-blue); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+        .bool-select { background: rgba(0,255,157,0.05); color: var(--neon-green); border-color: rgba(0,255,157,0.2); font-weight: 800; }
+        textarea { height: 80px; resize: vertical; font-family: 'Inter', sans-serif; }
+        .btn-now { background: var(--neon-blue); color: var(--dark-bg); border: none; padding: 0 15px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 0.75em; text-transform: uppercase; transition: 0.2s; }
+        .btn-save { grid-column: span 4; background: var(--neon-green); color: var(--dark-bg); padding: 20px; border: none; border-radius: 15px; font-weight: 900; font-size: 1.1em; cursor: pointer; margin-top: 40px; text-transform: uppercase; transition: 0.3s; letter-spacing: 1px; }
+        .back-link { color: #64748b; text-decoration: none; font-size: 0.9em; margin-bottom: 20px; display: inline-block; font-weight: 600; }
+        input.new-id-style { border-color: var(--gold); color: var(--gold); font-weight: 800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/mivs-admin/{{token}}/{{pin}}/parishes_manage" class="back-link">← Wróć do listy</a>
+        <h2>Master Editor: {{ p.name or 'Nowa Parafia' }} (#{{ p.id }})</h2>
+        
+        <form id="fullParishForm">
+            <input type="hidden" id="is_new_flag" value="{{ 'true' if p.is_new else 'false' }}">
+
+            <div class="form-grid">
+                <div class="section-header">1. Tożsamość i Lokalizacja</div>
+                <div class="field-group">
+                    <label>ID Parafii {% if p.is_new %}(MOŻESZ ZMIENIĆ){% endif %}</label>
+                    <input type="number" name="id_manual" value="{{ p.id }}" {% if not p.is_new %}readonly style="opacity: 0.6;"{% endif %}>
+                </div>
+                <div class="field-group col-2"><label>Nazwa Parafii</label><input type="text" name="name" value="{{ p.name or '' }}"></div>
+                <div class="field-group"><label>Rok założenia</label><input type="text" name="foundingYear" value="{{ p.foundingYear or '' }}"></div>
+                
+                <div class="field-group col-2"><label>Adres</label><input type="text" name="address" value="{{ p.address or '' }}"></div>
+                <div class="field-group"><label>Szerokość (Lat)</label><input type="text" name="latitude" value="{{ p.latitude or '' }}"></div>
+                <div class="field-group"><label>Długość (Lng)</label><input type="text" name="longitude" value="{{ p.longitude or '' }}"></div>
+
+                <div class="field-group">
+                    <label>Typ: Katedra?</label>
+                    <select name="isCathedral" class="bool-select">
+                        <option value="1" {% if p.isCathedral %}selected{% endif %}>TAK</option>
+                        <option value="0" {% if not p.isCathedral %}selected{% endif %}>NIE</option>
+                    </select>
+                </div>
+                <div class="field-group col-3"><label>Zdjęcie Parafii (URL)</label><input type="text" name="photoUrl" value="{{ p.photoUrl or '' }}"></div>
+
+                <div class="section-header">2. Struktura i Kontakt</div>
+                <div class="field-group"><label>Diecezja</label><input type="text" name="diocese" value="{{ p.diocese or '' }}"></div>
+                <div class="field-group"><label>Dekanat</label><input type="text" name="deanery" value="{{ p.deanery or '' }}"></div>
+                <div class="field-group"><label>Proboszcz</label><input type="text" name="pastorName" value="{{ p.pastorName or '' }}"></div>
+                <div class="field-group"><label>Telefon</label><input type="text" name="phoneNum" value="{{ p.phoneNum or '' }}"></div>
+                
+                <div class="field-group"><label>E-mail</label><input type="email" name="email" value="{{ p.email or '' }}"></div>
+                <div class="field-group"><label>WWW</label><input type="text" name="websiteUrl" value="{{ p.websiteUrl or '' }}"></div>
+                <div class="field-group"><label>Facebook</label><input type="text" name="socialMediaFacebook" value="{{ p.socialMediaFacebook or '' }}"></div>
+                <div class="field-group"><label>YouTube</label><input type="text" name="socialMediaYouTube" value="{{ p.socialMediaYouTube or '' }}"></div>
+                <div class="field-group"><label>Instagram</label><input type="text" name="socialMediaInstagram" value="{{ p.socialMediaInstagram or '' }}"></div>
+
+                <div class="section-header">3. Liturgia (Grafik Tygodniowy)</div>
+                <div class="field-group">
+                    <label>Msza Wigilijna?</label>
+                    <select name="hasMassSunday" class="bool-select">
+                        <option value="1" {% if p.hasMassSunday %}selected{% endif %}>TAK</option>
+                        <option value="0" {% if not p.hasMassSunday %}selected{% endif %}>NIE</option>
+                    </select>
+                </div>
+                <div class="field-group"><label>Godz. Wigilijnej</label><input type="text" name="hasMassSundayHour" value="{{ p.hasMassSundayHour or '' }}"></div>
+                <div class="field-group">
+                    <label>Dla dzieci?</label>
+                    <select name="hasMassForChildren" class="bool-select">
+                        <option value="1" {% if p.hasMassForChildren %}selected{% endif %}>TAK</option>
+                        <option value="0" {% if not p.hasMassForChildren %}selected{% endif %}>NIE</option>
+                    </select>
+                </div>
+                <div class="field-group"><label>Godz. dla dzieci</label><input type="text" name="hasMassForChildrenHour" value="{{ p.hasMassForChildrenHour or '' }}"></div>
+
+                <div class="field-group"><label>Poniedziałek</label><input type="text" name="massHoursMonday" value="{{ p.massHoursMonday or '' }}"></div>
+                <div class="field-group"><label>Wtorek</label><input type="text" name="massHoursTuesday" value="{{ p.massHoursTuesday or '' }}"></div>
+                <div class="field-group"><label>Środa</label><input type="text" name="massHoursWednesday" value="{{ p.massHoursWednesday or '' }}"></div>
+                <div class="field-group"><label>Czwartek</label><input type="text" name="massHoursThursday" value="{{ p.massHoursThursday or '' }}"></div>
+                <div class="field-group"><label>Piątek</label><input type="text" name="massHoursFriday" value="{{ p.massHoursFriday or '' }}"></div>
+                <div class="field-group"><label>Sobota</label><input type="text" name="massHoursSaturday" value="{{ p.massHoursSaturday or '' }}"></div>
+                <div class="field-group col-2"><label>Niedziela (Pełny wykaz)</label><input type="text" name="massHoursSunday" value="{{ p.massHoursSunday or '' }}"></div>
+
+                <div class="section-header">4. Nabożeństwa i I Soboty</div>
+                <div class="field-group">
+                    <label>I Sobota?</label>
+                    <select name="firstSaturdayOfMonth" class="bool-select">
+                        <option value="1" {% if p.firstSaturdayOfMonth %}selected{% endif %}>TAK</option>
+                        <option value="0" {% if not p.firstSaturdayOfMonth %}selected{% endif %}>NIE</option>
+                    </select>
+                </div>
+                <div class="field-group"><label>I Sobota Godz.</label><input type="text" name="firstSaturdayOfMonth_hour" value="{{ p.firstSaturdayOfMonth_hour or '' }}"></div>
+                <div class="field-group col-2"><label>I Sobota Info</label><input type="text" name="firstSaturdayOfMonth_info" value="{{ p.firstSaturdayOfMonth_info or '' }}"></div>
+                
+                <div class="field-group col-2"><label>Adoracja</label><textarea name="adorationInfo">{{ p.adorationInfo or '' }}</textarea></div>
+                <div class="field-group col-2"><label>Spowiedź</label><textarea name="confessionInfo">{{ p.confessionInfo or '' }}</textarea></div>
+                <div class="field-group col-2"><label>Biuro / Kancelaria</label><textarea name="officeHoursText">{{ p.officeHoursText or '' }}</textarea></div>
+                <div class="field-group col-2"><label>Ogłoszenia (HTML)</label><textarea name="announcements">{{ p.announcements or '' }}</textarea></div>
+
+                <div class="section-header">5. Administracja i System</div>
+                <div class="field-group col-2"><label>Konto Bankowe</label><input type="text" name="bankAccountNumber" value="{{ p.bankAccountNumber or '' }}"></div>
+                <div class="field-group col-2"><label>Info o darowiznach</label><input type="text" name="donationInfo" value="{{ p.donationInfo or '' }}"></div>
+                
+                <div class="field-group"><label>Access Token</label><input type="text" name="access_token" value="{{ p.access_token or '' }}"></div>
+                <div class="field-group"><label>PIN Code</label><input type="text" name="pin_code" value="{{ p.pin_code or '' }}"></div>
+                
+                <div class="field-group">
+                    <label>Pierwsza Subskr.</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" name="first_subscription_date" id="f_sub" value="{{ p.first_subscription_date or '' }}">
+                        <button type="button" class="btn-now" onclick="setNow('f_sub')">NOW</button>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Ostatnia Subskr.</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" name="last_subscription_date" id="l_sub" value="{{ p.last_subscription_date or '' }}">
+                        <button type="button" class="btn-now" onclick="setNow('l_sub')">NOW</button>
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label>Subskr. Wygasa</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" name="subscription_expires" id="exp_sub" value="{{ p.subscription_expires or '' }}">
+                        <button type="button" class="btn-now" onclick="setNow('exp_sub')">NOW</button>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <label>Status Subskrypcji</label>
+                    <select name="is_active" class="bool-select">
+                        <option value="1" {% if p.is_active == '1' or p.is_active == 1 %}selected{% endif %}>AKTYWNA</option>
+                        <option value="0" {% if p.is_active == '0' or p.is_active == 0 %}selected{% endif %}>NIEAKTYWNA</option>
+                    </select>
+                </div>
+
+                <div class="field-group col-2">
+                    <label>Synchronizacja (last_update)</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" name="last_update" id="last_update" value="{{ p.last_update or '' }}" placeholder="YYYY-MM-DD HH:MM:SS">
+                        <button type="button" class="btn-now" style="background: var(--gold);" onclick="setNow('last_update')">NOW</button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="saveBtn" class="btn-save" onclick="processFullSave()">Zatwierdź zmiany w bazie danych ➔</button>
+        </form>
+    </div>
+
+    <script>
+        function setNow(id) {
+            const now = new Date();
+            const pad = n => n.toString().padStart(2, '0');
+            const formatted = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+            document.getElementById(id).value = formatted;
+        }
+
+        async function processFullSave() {
+            const isNew = document.getElementById('is_new_flag').value === 'true';
+            const actionText = isNew ? "DODAĆ NOWY REKORD?" : "NADPISAĆ REKORD?";
+            
+            if(!confirm(`CZY NA PEWNO CHCESZ ${actionText}`)) return;
+            
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerText = "PRZESYŁANIE DANYCH...";
+
+            const form = document.getElementById('fullParishForm');
+            const formData = new FormData(form);
+            const token = "{{ token }}";
+            const pin = "{{ pin }}";
+            const p_id = "{{ p.id }}";
+            
+            // Decydujemy o endpointcie: create dla nowych, update dla istniejących
+            const endpoint = isNew ? "create" : `update/${p_id}`;
+            
+            try {
+                const response = await fetch(`/mivs-admin/${token}/${pin}/parishes_manage/${endpoint}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if(result.status === "success") {
+                    alert(isNew ? "NOWA PARAFIA DODANA." : "DANE ZAKTUALIZOWANE.");
+                    window.location.href = `/mivs-admin/${token}/${pin}/parishes_manage`;
+                } else {
+                    alert("BŁĄD: " + result.message);
+                    btn.disabled = false;
+                    btn.innerText = "Zatwierdź zmiany w bazie danych ➔";
+                }
+            } catch (e) {
+                alert("BŁĄD POŁĄCZENIA Z SERWEREM.");
+                btn.disabled = false;
+                btn.innerText = "Zatwierdź zmiany w bazie danych ➔";
+            }
+        }
+    </script>
+</body>
+</html>

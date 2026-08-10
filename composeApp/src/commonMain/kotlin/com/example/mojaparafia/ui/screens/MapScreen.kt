@@ -109,13 +109,22 @@ fun MapScreen(
 
     var hasInitialFocusBeenSet by remember { mutableStateOf(false) }
     LaunchedEffect(homeParishId, parishes) {
-        if (!hasInitialFocusBeenSet && homeParishId != null && parishes.isNotEmpty()) {
-            val homeParish = parishes.find { it.id == homeParishId }
+        if (!hasInitialFocusBeenSet) {
+            val homeParish = if (homeParishId != null && parishes.isNotEmpty()) {
+                parishes.find { it.id == homeParishId }
+            } else null
+
+            kotlinx.coroutines.delay(500.milliseconds)
+
             if (homeParish != null) {
-                kotlinx.coroutines.delay(500.milliseconds)
                 viewModel.focusMapOn(homeParish.latitude, homeParish.longitude)
-                hasInitialFocusBeenSet = true
+            } else {
+                val centerOfPolandLat = 52.0693
+                val centerOfPolandLng = 19.4803
+                viewModel.focusMapOn(centerOfPolandLat, centerOfPolandLng)
             }
+
+            hasInitialFocusBeenSet = true
         }
     }
 
@@ -124,7 +133,6 @@ fun MapScreen(
             modifier = Modifier.fillMaxSize(),
             parishes = displayedParishes,
             homeParishId = homeParishId,
-            userHasCrown = userHasCrown,
             onMapLoaded = { isMapLoaded = true },
             focusRequest = mapFocusRequest,
             onMapFocused = { viewModel.onMapFocused() },
@@ -137,7 +145,6 @@ fun MapScreen(
             }
         )
 
-        // Baner "Brakująca parafia" przesunięty pod uniwersalny pasek
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)

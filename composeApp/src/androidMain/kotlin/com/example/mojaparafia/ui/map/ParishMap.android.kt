@@ -25,6 +25,7 @@ import kotlinx.coroutines.delay
 import com.example.mojaparafia.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 actual fun ParishMap(
@@ -33,7 +34,6 @@ actual fun ParishMap(
     focusRequest: Pair<Double, Double>?,
     onMapFocused: () -> Unit,
     homeParishId: String?,
-    userHasCrown: Boolean,
     onMapLoaded: () -> Unit,
     onMarkerClick: (String) -> Unit,
     onMapLongClick: (Double, Double) -> Unit
@@ -184,11 +184,11 @@ actual fun ParishMap(
         }
     )
 
-    LaunchedEffect(mapReady, parishes, homeParishId, userHasCrown) {
+    LaunchedEffect(mapReady, parishes, homeParishId) {
         if (mapReady && mMap != null) {
             val manager = clusterManager ?: return@LaunchedEffect
 
-            delay(300)
+            delay(300.milliseconds)
 
             val newClusterItems = withContext(Dispatchers.Default) {
                 parishes.map { parish ->
@@ -200,8 +200,7 @@ actual fun ParishMap(
                         parishId = parish.id,
                         isCathedral = if (parish.isCathedral) 1 else 0,
                         isFavorite = parish.isFavorite,
-                        isHomeParish = (parish.id == homeParishId),
-                        userHasCrown = userHasCrown
+                        isHomeParish = (parish.id == homeParishId)
                     )
                 }
             }

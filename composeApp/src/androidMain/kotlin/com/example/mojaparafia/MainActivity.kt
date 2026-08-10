@@ -157,8 +157,6 @@ class MainActivity : ComponentActivity() {
                     if (task.isSuccessful) {
                         val token = task.result
                         viewModel.saveFcmToken(token)
-                        viewModel.syncAdminTokenToHub(token)
-                        viewModel.fetchAdminConfig()
                     }
                 }
             }
@@ -247,7 +245,6 @@ class MainActivity : ComponentActivity() {
                         AppCompatDelegate.setDefaultNightMode(newNightMode)
                     }
                 },
-                isIos = false
             )
         }
     }
@@ -315,7 +312,6 @@ class MainActivity : ComponentActivity() {
         val isFirstRun = !prefs.getBoolean("data_sync_completed", false)
         if (!isFirstRun) {
             viewModel.syncParishes()
-            viewModel.fetchUserStats()
         }
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SCREEN_NAME, this@MainActivity::class.simpleName)

@@ -30,7 +30,6 @@ fun FunctionScreen(
     onSupportClick: () -> Unit,
     onSettingsClick: () -> Unit,
     hasNewNews: Boolean,
-    isIos: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -59,15 +58,6 @@ fun FunctionScreen(
             showBadge = false,
             onClick = onHelpClick
         )
-
-        if (!isIos) {
-            FunctionOptionCard(
-                icon = painterResource(Res.drawable.ic_coffe),
-                title = stringResource(Res.string.support_project_title),
-                showBadge = false,
-                onClick = onSupportClick
-            )
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

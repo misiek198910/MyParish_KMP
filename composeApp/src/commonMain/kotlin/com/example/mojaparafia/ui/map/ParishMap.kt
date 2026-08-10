@@ -11,7 +11,6 @@ expect fun ParishMap(
     focusRequest: Pair<Double, Double>?,
     onMapFocused: () -> Unit,
     homeParishId: String?,
-    userHasCrown: Boolean,
     onMapLoaded: () -> Unit,
     onMarkerClick: (parishId: String) -> Unit,
     onMapLongClick: (lat: Double, lng: Double) -> Unit

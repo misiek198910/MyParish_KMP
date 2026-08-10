@@ -45,7 +45,6 @@ actual fun ParishMap(
     focusRequest: Pair<Double, Double>?,
     onMapFocused: () -> Unit,
     homeParishId: String?,
-    userHasCrown: Boolean,
     onMapLoaded: () -> Unit,
     onMarkerClick: (parishId: String) -> Unit,
     onMapLongClick: (lat: Double, lng: Double) -> Unit
@@ -88,7 +87,7 @@ actual fun ParishMap(
         onMapLoaded()
     }
 
-    LaunchedEffect(parishes, homeParishId, userHasCrown, boundingBox) {
+    LaunchedEffect(parishes, homeParishId, boundingBox) {
         if (parishes.isEmpty()) return@LaunchedEffect
 
         val jsonString = withContext(Dispatchers.Default) {

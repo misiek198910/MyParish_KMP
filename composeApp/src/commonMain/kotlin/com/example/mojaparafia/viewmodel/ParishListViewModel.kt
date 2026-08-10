@@ -95,9 +95,6 @@ class ParishListViewModel : ViewModel() {
     private val _deviceId = MutableStateFlow("")
     val deviceId: StateFlow<String> = _deviceId.asStateFlow()
 
-    private val _adminDeviceId = MutableStateFlow<String?>(null)
-    val adminDeviceId: StateFlow<String?> = _adminDeviceId.asStateFlow()
-
     private val _mapFocusRequest = MutableStateFlow<Pair<Double, Double>?>(null)
     val mapFocusRequest: StateFlow<Pair<Double, Double>?> = _mapFocusRequest.asStateFlow()
 
@@ -110,15 +107,6 @@ class ParishListViewModel : ViewModel() {
             viewModelScope.launch(Dispatchers.Default) {
                 parishRepository.loadParishesFromDatabase()
                 syncParishes()
-
-                if (_homeParishId.value == null) {
-                    val location = apiService.getIpLocation()
-                    if (location != null && location.lat != 0.0 && location.lon != 0.0) {
-                        withContext(Dispatchers.Main) {
-                            focusMapOn(location.lat, location.lon)
-                        }
-                    }
-                }
             }
         }
     }
@@ -158,7 +146,7 @@ class ParishListViewModel : ViewModel() {
     fun submitPriestRequest(parishId: String, email: String) {
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                 //apiService.sendCollaborationRequest(parishId, CollaborationRequest(email))
+                //apiService.sendCollaborationRequest(parishId, CollaborationRequest(email))
             } catch (e: Exception) {
             }
         }
@@ -187,21 +175,6 @@ class ParishListViewModel : ViewModel() {
                 _newsList.value = emptyList()
             } finally {
                 _isLoading.value = false
-            }
-        }
-    }
-
-    fun fetchUserStats() {
-        viewModelScope.launch(Dispatchers.Default) {
-            try {
-                val stats = apiService.getUserStats(_deviceId.value)
-                if (stats != null) {
-                    withContext(Dispatchers.Main) {
-                        _userPoints.value = stats.points
-                        _hasCrown.value = stats.hasCrown
-                    }
-                }
-            } catch (e: Exception) {
             }
         }
     }
@@ -335,7 +308,6 @@ class ParishListViewModel : ViewModel() {
     }
 
     fun processUserLocation(lat: Double, lon: Double, action: LocationAction) {
-
         viewModelScope.launch(Dispatchers.Default) {
             when (action) {
                 LocationAction.CURRENT_LOCATION -> {
@@ -344,7 +316,6 @@ class ParishListViewModel : ViewModel() {
                 LocationAction.NEAREST_PARISH -> {
                     val parishesList = allParishes.value
                     if (parishesList.isNotEmpty()) {
-
                         val sorted = parishesList.sortedBy { calculateDistance(lat, lon, it.latitude, it.longitude) }
                         val nearest = sorted.first()
 
@@ -357,6 +328,7 @@ class ParishListViewModel : ViewModel() {
             }
         }
     }
+
     private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val r = 6371e3
         val phi1 = lat1 * kotlin.math.PI / 180
@@ -374,12 +346,10 @@ class ParishListViewModel : ViewModel() {
 
     fun initFromPlatform(deviceIdStr: String, savedHomeParishId: String?) {
         _deviceId.value = deviceIdStr
-        this.deviceIdStr =
-            deviceIdStr
+        this.deviceIdStr = deviceIdStr
         _homeParishId.value = savedHomeParishId
 
         if (deviceIdStr.isNotEmpty()) {
-            fetchUserStats()
             fetchNews()
         }
     }
@@ -424,7 +394,6 @@ class ParishListViewModel : ViewModel() {
     }
 
     fun saveFcmToken(token: String) {
-
         if (_deviceId.value.isEmpty() || token.isEmpty()) {
             println("[FCM] Błąd: Brak deviceId lub tokena. Nie można wysłać do serwera.")
             return
@@ -450,40 +419,4 @@ class ParishListViewModel : ViewModel() {
             }
         }
     }
-
-    fun syncAdminTokenToHub(token: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // 1. Pobieramy konfigurację admina z serwera (czyste GET)
-                val config = apiService.getAdminConfig()
-
-                // 2. Jeśli serwer nie zwrócił danych lub ID się nie zgadza - przerywamy
-                if (config == null || _deviceId.value != config.admin_device_id) {
-                    return@launch
-                }
-
-                // 3. Jesteśmy adminem! Wysyłamy aktualny token do bazy
-                val success = apiService.updateAdminFcmToken(_deviceId.value, token)
-
-                if (success) {
-                    println("Admin token (FCM) zaktualizowany w Hubie pomyślnie!")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    fun fetchAdminConfig() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val config = apiService.getAdminConfig()
-                _adminDeviceId.value = config?.admin_device_id
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-
 }
