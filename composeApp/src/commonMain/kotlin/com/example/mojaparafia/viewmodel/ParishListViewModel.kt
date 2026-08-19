@@ -81,6 +81,9 @@ class ParishListViewModel : ViewModel() {
     private val _newsList = MutableStateFlow<List<NewsResponse>>(emptyList())
     val newsList: StateFlow<List<NewsResponse>> = _newsList.asStateFlow()
 
+    private val _hasNewNews = MutableStateFlow(false)
+    val hasNewNews: StateFlow<Boolean> = _hasNewNews.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
     private val _homeParishId = MutableStateFlow<String?>(null)
@@ -152,11 +155,11 @@ class ParishListViewModel : ViewModel() {
         }
     }
 
-    fun syncParishes(forceFullSync: Boolean = false) {
+    fun syncParishes(forceFullSync: Boolean = false, isUserRefresh: Boolean = false) {
         viewModelScope.launch(Dispatchers.Default) {
             _isSyncing.value = true
             try {
-                parishRepository.syncParishes(forceFullSync = forceFullSync)
+                parishRepository.syncParishes(forceFullSync = forceFullSync, isUserRefresh = isUserRefresh)
                 parishRepository.syncAllEvents()
             } catch (e: Exception) {
             } finally {
@@ -302,7 +305,24 @@ class ParishListViewModel : ViewModel() {
         _mapFocusRequest.value = null
     }
 
-    fun logSearchEvent(query: String) {}
+    fun handleSearchSubmit(query: String) {
+        if (query.isBlank()) return
+
+        viewModelScope.launch(Dispatchers.Default) {
+            val queryLower = query.lowercase()
+
+            val match = allParishes.value.firstOrNull { parish ->
+                (parish.name ?: "").lowercase().contains(queryLower) ||
+                        (parish.address ?: "").lowercase().contains(queryLower)
+            }
+
+            if (match != null) {
+                withContext(Dispatchers.Main) {
+                    focusMapOn(match.latitude, match.longitude)
+                }
+            }
+        }
+    }
     fun clearNearestParishesState() {
         _nearestParishesState.value = null
     }
@@ -418,5 +438,22 @@ class ParishListViewModel : ViewModel() {
                 e.printStackTrace()
             }
         }
+    }
+
+    fun checkForNewNews() {
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val news = apiService.getNewsFeed()
+                val lastReadId = settings.getInt("last_read_news_id", 0)
+                val maxId = news?.maxOfOrNull { it.id } ?: 0
+
+                _hasNewNews.value = maxId > lastReadId
+            } catch (e: Exception) {
+            }
+        }
+    }
+
+    fun markNewsAsRead() {
+        _hasNewNews.value = false
     }
 }

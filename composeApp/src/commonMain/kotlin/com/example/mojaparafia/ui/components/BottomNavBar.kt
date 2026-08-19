@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -34,25 +33,30 @@ import myparish.composeapp.generated.resources.nav_map
 import myparish.composeapp.generated.resources.nav_more
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 fun CustomBottomNavBar(
     currentScreen: String,
+    hasNewNews: Boolean = false,
     onNavigate: (String) -> Unit
 ) {
+    // Usunięto sztywną wysokość 80.dp - teraz wysokość dostosowuje się dynamicznie
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
+        // Tło paska (Szkło) - na samym dole
         Surface(
-            color = Color.White,
+            color = Color.White.copy(alpha = 0.65f), // Efekt szkła 65%
             shadowElevation = 0.dp,
             border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f)),
-            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(64.dp)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
         ) {
             Row(
-                modifier = Modifier.fillMaxSize().navigationBarsPadding(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding() // Pchnie zawartość (ikony) nad pasek systemowy, ale tło-szkło sięga samej krawędzi ekranu
+                    .height(64.dp),          // Tylko obszar użyteczny ma 64.dp
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -68,12 +72,23 @@ fun CustomBottomNavBar(
                 Spacer(modifier = Modifier.width(72.dp))
 
                 IconButton(onClick = { onNavigate("FUNCTIONS") }) {
-                    Icon(
-                        imageVector = Icons.Filled.Menu, // lub Icons.Filled.Apps
-                        contentDescription = stringResource(Res.string.nav_more),
-                        tint = if (currentScreen == "FUNCTIONS") Color(0xFF1976D2) else Color.Gray,
-                        modifier = Modifier.size(32.dp)
-                    )
+                    Box {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = stringResource(Res.string.nav_more),
+                            tint = if (currentScreen == "FUNCTIONS") Color(0xFF1976D2) else Color.Gray,
+                            modifier = Modifier.size(32.dp)
+                        )
+
+                        if (hasNewNews) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .size(10.dp)
+                                    .background(Color.Red, CircleShape)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -81,6 +96,7 @@ fun CustomBottomNavBar(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
                 .padding(bottom = 16.dp)
                 .size(72.dp)
                 .background(Color(0xFFF5F7FA), CircleShape)

@@ -160,7 +160,11 @@ fun MapScreen(
             }
         }
 
-        val bottomMapPadding = 76.dp
+        // ZMIANA: Dynamiczny padding dolny.
+        // Bierzemy 110.dp (aby przeskoczyć nasz nowy dolny pasek i zielony przycisk)
+        // i dodajemy do tego wysokość systemowego paska Samsunga / Pixela!
+        val bottomSystemInsets = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        val bottomMapPadding = 110.dp + bottomSystemInsets
 
         Box(modifier = Modifier.fillMaxSize()) {
             FabPanelOverlay(

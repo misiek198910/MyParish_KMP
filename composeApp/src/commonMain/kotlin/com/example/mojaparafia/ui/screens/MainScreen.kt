@@ -40,6 +40,10 @@ import myparish.composeapp.generated.resources.home_parish_not_selected_title
 import myparish.composeapp.generated.resources.settings_cancel_all_success
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.DisposableEffect
 
 @Composable
 fun MainScreen(
@@ -72,10 +76,13 @@ fun MainScreen(
         viewModel.loadReminders()
     }
 
+    val isSyncing by viewModel.isSyncing.collectAsState()
+
+    val hasNewNews by viewModel.hasNewNews.collectAsState()
+
     val parishes by viewModel.allParishes.collectAsState(emptyList())
     val homeParishId by viewModel.homeParishId.collectAsState(viewModel.homeParishId.value)
 
-    var hasNewNews by remember { mutableStateOf(false) }
     var showSupportDialog by remember { mutableStateOf(false) }
 
     var isSearchActive by rememberSaveable { mutableStateOf(false) }
@@ -90,6 +97,19 @@ fun MainScreen(
 
     var initialRouteHandled by rememberSaveable {
         mutableStateOf(viewModel.homeParishId.value != null)
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.checkForNewNews()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     LaunchedEffect(homeParishId) {
@@ -141,6 +161,8 @@ fun MainScreen(
                             isLandscape = isLandscape,
                             isParishActive = true,
                             events = homeEvents,
+                            isSyncing = isSyncing,
+                            onRefresh = { viewModel.syncParishes(isUserRefresh = true) },
                             onProposeChangeClick = { onProposeChangeClick(homeParish.id, homeParish.name ?: "Nieznana") },
                             onToggleFavorite = { viewModel.toggleFavorite(homeParish) },
                             onToggleHomeParish = { viewModel.toggleHomeParish(homeParish.id) {} },
@@ -194,7 +216,10 @@ fun MainScreen(
                 "FUNCTIONS" -> {
                     FunctionScreen(
                         onAddParishClick = { onNavigateToAddParish(0.0, 0.0) },
-                        onNewsClick = onOpenNews,
+                        onNewsClick = {
+                            viewModel.markNewsAsRead()
+                            onOpenNews()
+                        },
                         onHelpClick = onOpenHelp,
                         onSupportClick = { showSupportDialog = true },
                         onSettingsClick = { currentScreen = "SETTINGS" },
@@ -234,7 +259,7 @@ fun MainScreen(
                         if (!isSearchActive) searchQuery = ""
                     },
                     onFilterClick = { showFilterSheet = true },
-                    onSearchSubmit = { query -> viewModel.logSearchEvent(query) }
+                    onSearchSubmit = { query -> viewModel.handleSearchSubmit(query) }
                 )
             }
         }
@@ -243,6 +268,7 @@ fun MainScreen(
             Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                 CustomBottomNavBar(
                     currentScreen = currentScreen,
+                    hasNewNews = hasNewNews,
                     onNavigate = { currentScreen = it }
                 )
             }

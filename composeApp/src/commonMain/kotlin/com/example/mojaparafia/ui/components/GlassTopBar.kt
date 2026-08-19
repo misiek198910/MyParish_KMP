@@ -14,18 +14,20 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.stringResource
 import myparish.composeapp.generated.resources.Res
 import myparish.composeapp.generated.resources.*
@@ -60,7 +62,7 @@ fun UniversalGlassTopBar(
     }
 
     Surface(
-        color = Color.White.copy(alpha = 0.90f),
+        color = Color.White.copy(alpha = 0.65f),
         modifier = modifier.fillMaxWidth(),
         shadowElevation = 0.dp,
         border = BorderStroke(0.5.dp, Color.LightGray.copy(alpha = 0.5f))
@@ -73,6 +75,13 @@ fun UniversalGlassTopBar(
                 label = "TopBarAnimation"
             ) { searchMode ->
                 if (searchMode && currentScreen == "MAP") {
+
+                    val focusRequester = remember { FocusRequester() }
+
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth().height(barHeight).padding(horizontal = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -89,7 +98,9 @@ fun UniversalGlassTopBar(
                                 onValueChange = onSearchQueryChange,
                                 textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
                                 cursorBrush = SolidColor(Color(0xFF1976D2)),
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(

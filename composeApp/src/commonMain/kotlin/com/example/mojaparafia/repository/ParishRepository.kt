@@ -27,10 +27,9 @@ class ParishRepository {
         return eventDao.getEventsForParish(parishId)
     }
 
-    suspend fun syncParishes(forceFullSync: Boolean = false): Boolean {
+    suspend fun syncParishes(forceFullSync: Boolean = false, isUserRefresh: Boolean = false): Boolean {
 
-        if (hasSyncedThisSession && !forceFullSync) return true
-
+        if (hasSyncedThisSession && !forceFullSync && !isUserRefresh) return true
         return try {
 
             val currentLocalParishes = parishDao.getAllParishes().first()

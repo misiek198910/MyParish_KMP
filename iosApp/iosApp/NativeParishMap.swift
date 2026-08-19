@@ -59,7 +59,6 @@ class ParishClusterView: MKMarkerAnnotationView {
     let mapView = MKMapView()
     var onClick: ((String) -> Void)?
     var onCameraChange: ((String) -> Void)?
-
     var onMapLongClick: ((KotlinDouble, KotlinDouble) -> Void)?
 
     override init() {
@@ -69,17 +68,13 @@ class ParishClusterView: MKMarkerAnnotationView {
         mapView.pointOfInterestFilter = .excludingAll
         mapView.isAccessibilityElement = false
         mapView.accessibilityElementsHidden = true
-
+        mapView.showsUserLocation = true
         mapView.register(FlatParishView.self, forAnnotationViewWithReuseIdentifier: "FlatParishView")
         mapView.register(ParishClusterView.self, forAnnotationViewWithReuseIdentifier: "ClusterView")
 
         let polandCenter = CLLocationCoordinate2D(latitude: 52.0693, longitude: 19.4803)
         let region = MKCoordinateRegion(center: polandCenter, latitudinalMeters: 700000, longitudinalMeters: 700000)
         mapView.setRegion(region, animated: false)
-
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
-        longPressGesture.minimumPressDuration = 0.5
-        mapView.addGestureRecognizer(longPressGesture)
     }
 
     var view: UIView { return mapView }
@@ -103,18 +98,6 @@ class ParishClusterView: MKMarkerAnnotationView {
 
     func setOnMapLongClickListener(onLongClick: @escaping (KotlinDouble, KotlinDouble) -> Void) {
         self.onMapLongClick = onLongClick
-    }
-
-    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
-        if gestureRecognizer.state == .began {
-            let touchPoint = gestureRecognizer.location(in: mapView)
-            let coordinate = mapView.convert(touchPoint, toCoordinateFrom: mapView)
-
-            onMapLongClick?(
-                KotlinDouble(value: coordinate.latitude),
-                KotlinDouble(value: coordinate.longitude)
-            )
-        }
     }
 
     func centerOn(lat: Double, lng: Double) {

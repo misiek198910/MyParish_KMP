@@ -26,6 +26,9 @@ import com.example.mojaparafia.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.milliseconds
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 
 @Composable
 actual fun ParishMap(
@@ -45,13 +48,10 @@ actual fun ParishMap(
     var clusterManager by remember { mutableStateOf<ClusterManager<ParishClusterItem>?>(null) }
     var isInitialCentered by rememberSaveable { mutableStateOf(false) }
     var mapReady by remember { mutableStateOf(false) }
-
-    // 🔥 NOWOŚĆ: Odczytujemy ustawienia bez polegania na zawodnym Android OS
     val kmpSettings = remember { com.russhwolf.settings.Settings() }
     val themeMode = remember { kmpSettings.getInt("app_theme", 0) }
     var isAutoDark by remember { mutableStateOf(false) }
 
-    // 🕒 Obliczanie słońca co minutę, jeśli wybrano tryb automatyczny (0)
     LaunchedEffect(themeMode) {
         if (themeMode == 0) {
             while (true) {
@@ -67,12 +67,11 @@ actual fun ParishMap(
                 val (sunrise, sunset) = sunTimes[month]
 
                 isAutoDark = time < sunrise || time >= sunset
-                delay(60000) // Sprawdź ponownie za 60 sekund
+                delay(60000)
             }
         }
     }
 
-    // Ostateczna decyzja, czy mapa ma być ciemna
     val isMapDark = when (themeMode) {
         1 -> false
         2 -> true
@@ -133,6 +132,16 @@ actual fun ParishMap(
                         isZoomControlsEnabled = false
                         isMapToolbarEnabled = false
                         isCompassEnabled = false
+                        isMyLocationButtonEnabled = false
+                    }
+
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        try {
+                            googleMap.isMyLocationEnabled = true
+                        } catch (e: SecurityException) {
+                            Log.e("MAP", "Brak uprawnień do rysowania niebieskiej kropki", e)
+                        }
                     }
 
                     googleMap.setOnMapLongClickListener { latLng -> onMapLongClick(latLng.latitude, latLng.longitude) }
